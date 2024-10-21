@@ -31,6 +31,9 @@ class FlashcardActivity : AppCompatActivity() {
     private lateinit var answerTextView: TextView
     private lateinit var nextButton: Button
     private lateinit var previousButton: Button
+    private lateinit var saveButton: Button
+    private lateinit var newButton: Button
+    private var currentFlashcardIndex = 0
 
         @SuppressLint("MissingInflatedId")
 
@@ -43,60 +46,60 @@ class FlashcardActivity : AppCompatActivity() {
             answerTextView = findViewById(R.id.Answer_text)
             nextButton = findViewById(R.id.next_button)
             previousButton = findViewById(R.id.prev_button)
+            saveButton = findViewById(R.id.save_button)
+            newButton= findViewById(R.id.new_button)
 
-/*            nextButton.setOnClickListener {
+            nextButton.setOnClickListener {
                 navigateToNextFlashcard()
         }
             previousButton.setOnClickListener {
                 navigateToPreviousFlashcard()
-        }*/
+        }
 
-            /*saveButton.setOnClickListener {
+            saveButton.setOnClickListener {
                 saveFlashcard()
             }
             newButton.setOnClickListener {
                 newFlashcard()
-            }*/
+            }
     }
 
-/*    private fun navigateToNextFlashcard() {
+   private fun navigateToNextFlashcard() {
+
         val flashcards = flashcardRepository.getFlashcards()
         if (currentFlashcardIndex < flashcards.size - 1) {
                currentFlashcardIndex++
             displayFlashcard(flashcards[currentFlashcardIndex])
         }
-    }*/
+    }
 
-/*    private fun navigateToPreviousFlashcard() {
+    private fun navigateToPreviousFlashcard() {
         val flashcards = flashcardRepository.getFlashcards()
         if (currentFlashcardIndex > 0) {
             currentFlashcardIndex--
             displayFlashcard(flashcards[currentFlashcardIndex])
         }
-    }*/
+    }
 
-/*
     private fun saveFlashcard() {
-        val title = titleEditText.text.toString()
-        val body = bodyEditText.text.toString()
+        val title = questionTextView.text.toString()
+        val body = answerTextView.text.toString()
         val flashcard = Flashcard(title, body)
         flashcardRepository.addFlashcard(flashcard)
         clearEditTexts()
     }
-*/
 
-
-/*    private fun newFlashcard() {
+   private fun newFlashcard() {
         clearEditTexts()
-    }*/
+    }
 
-/*    private fun displayFlashcard(flashcard: Flashcard) {
-        titleEditText.setText(flashcard.question)
-        bodyEditText.setText(flashcard.answer)
-    }*/
+    private fun displayFlashcard(flashcard: Flashcard) {
+        questionTextView.setText(flashcard.question)
+        answerTextView.setText(flashcard.answer)
+    }
 
-/*    private fun clearEditTexts() {
-        titleEditText.setText("")
-        bodyEditText.setText("")
-    }*/
+    private fun clearEditTexts() {
+        questionTextView.setText("")
+        answerTextView.setText("")
+    }
 }
