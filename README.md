@@ -25,3 +25,12 @@ FormulaLib:
 
 Important Notes:
 
+For accessing the repo, follow these steps:
+
+1) Download gitbash (it's free)
+2) Create an empty folder and access it with either the gitbash terminal or right-clicking the folder and opening gitbash here. 
+3) Git clone (repo link), into new folder with the use of gitbash.
+4) You can move whatever folders/files into here (please make it organized.)
+5) Then you can use android studio to create new branches, all of these functions should be under the git tab.
+   
+
