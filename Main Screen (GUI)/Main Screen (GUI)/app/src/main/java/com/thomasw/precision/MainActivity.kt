@@ -18,6 +18,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thomasw.precision.ui.theme.PrecisionTheme
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.platform.LocalContext
+
+//folder class file -- Konor
+import com.thomasw.precision.FolderFunctionality.*
+
+import android.widget.Toast
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +46,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TitleScreen(modifier: Modifier = Modifier) {
     var expanded by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }  // State for dialog visibility
+    var folderNameInput by remember { mutableStateOf(TextFieldValue()) } // State for folder name input
+    val folders = FolderManager.getFolders() // Observe folders list
 
     Box(modifier = modifier.fillMaxSize()) {
         // Top Bar
@@ -56,10 +67,12 @@ fun TitleScreen(modifier: Modifier = Modifier) {
                 )
             }
 
+            //region DropdownMenu
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
+                //region NoteBook
                 DropdownMenuItem(
                     text = { Text("Notebook") },
                     onClick = { /* Handle Create Notebook */ },
@@ -70,6 +83,8 @@ fun TitleScreen(modifier: Modifier = Modifier) {
                         )
                     }
                 )
+                //endregion
+                //region Flashcard
                 DropdownMenuItem(
                     text = { Text("Flashcard") },
                     onClick = { /* Handle Create Flashcard */ },
@@ -80,9 +95,16 @@ fun TitleScreen(modifier: Modifier = Modifier) {
                         )
                     }
                 )
+                //endregion
+                //region Folder
                 DropdownMenuItem(
                     text = { Text("Folder") },
-                    onClick = { /* Handle Create Folder */ },
+                    onClick = { /* Handle Create Folder */
+                        expanded = false;
+                        showDialog = true
+                        //FolderManager.createFolder(folderNameInput);
+                        //folderCounter.value++;
+                    },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Rounded.Folder,
@@ -90,7 +112,9 @@ fun TitleScreen(modifier: Modifier = Modifier) {
                         )
                     }
                 )
+                //endregion
             }
+            //endregion
 
             // App Name in the Center
             Text(
@@ -118,8 +142,34 @@ fun TitleScreen(modifier: Modifier = Modifier) {
                 }
             }
         }
+
+        // In your TitleScreen composable function
+        if (showDialog) {
+            FolderFunctionality().FolderNameDialog(
+                showDialog = showDialog,
+                folderNameInput = folderNameInput,
+                onFolderNameChange = { newText ->
+                    folderNameInput = newText // Update folder name input state
+                },
+                onFolderCreated = { folderName ->
+                    // Create folder and close the dialog
+                    FolderManager.createFolder(folderName)
+                    showDialog = false
+                }
+            )
+        }
+
+        val context = LocalContext.current
+        // Display the list of folders
+        FolderFunctionality().DisplayFolders(folders.toList()) { folder ->
+            // Handle folder click
+
+            Toast.makeText(context, "Clicked on folder: ${folder.name}", Toast.LENGTH_SHORT).show()
+        }
+
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
