@@ -1,7 +1,7 @@
 # Precision Notes
 
 Hi and Welcome to our Project "Precision-Notes"!
-Created by: Amy, Cole, Konnor, Kendrick and Thomas
+Created by: Amy, Cole, Konor, Kendrick and Thomas
 
 
 Goal: 
