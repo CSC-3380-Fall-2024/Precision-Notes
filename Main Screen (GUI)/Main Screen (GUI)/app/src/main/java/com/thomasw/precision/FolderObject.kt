@@ -2,20 +2,30 @@ package com.thomasw.precision
 
 import androidx.compose.runtime.mutableStateListOf
 
-data class Folder(val name: String) // Representing each folder with a name
+data class Folder(
+    val name: String,
+    val subfolders: MutableList<Folder> = mutableListOf()
+)
 
 object FolderManager {
-    private val folders = mutableListOf<Folder>()
+    private val rootFolders = mutableListOf<Folder>()
 
-    fun getFolders(): List<Folder> = folders
-
-    fun createFolder(name: String): Boolean {
-        // Check if the folder name is unique
-        return if (folders.none { it.name == name }) {
-            folders.add(Folder(name))
-            true
+    // Create a new folder
+    // Modify the FolderManager's createFolder function
+    fun createFolder(parentFolder: Folder?, folderName: String) {
+        val newFolder = Folder(folderName)
+        if (parentFolder == null) {
+            // If no parent folder, it's a top-level folder
+            rootFolders.add(newFolder)
         } else {
-            false // Folder name already exists
+            // Add new folder as a subfolder to the parent folder
+            parentFolder.subfolders.add(newFolder)
         }
     }
+
+    // Get the top-level folders
+    fun getRootFolders(): List<Folder> = rootFolders
+
+    // Get subfolders of a given folder
+    fun getSubfolders(folder: Folder): List<Folder> = folder.subfolders
 }

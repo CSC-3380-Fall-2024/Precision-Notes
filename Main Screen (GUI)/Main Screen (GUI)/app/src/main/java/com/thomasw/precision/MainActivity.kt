@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 
 //folder class file -- Konor
 import com.thomasw.precision.FolderFunctionality.*
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 import android.widget.Toast
 
@@ -34,9 +36,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PrecisionTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TitleScreen(
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    FolderFunctionality().AppNavigation()
                 }
             }
         }
@@ -44,11 +44,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TitleScreen(modifier: Modifier = Modifier) {
+fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }  // State for dialog visibility
     var folderNameInput by remember { mutableStateOf(TextFieldValue()) } // State for folder name input
-    val folders = FolderManager.getFolders() // Observe folders list
+    var currentParentFolder by remember { mutableStateOf<Folder?>(null) }  // Track current parent folder for subfolders
+    val folders = remember { mutableStateListOf(*FolderManager.getRootFolders().toTypedArray()) } // Observe root folders
+
+    // Track folder history for back navigation
+    var folderHistory by remember { mutableStateOf(listOf<Folder>()) }
+
 
     Box(modifier = modifier.fillMaxSize()) {
         // Top Bar
@@ -143,30 +148,59 @@ fun TitleScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        // In your TitleScreen composable function
+        // Folder Creation Dialog
         if (showDialog) {
             FolderFunctionality().FolderNameDialog(
                 showDialog = showDialog,
                 folderNameInput = folderNameInput,
                 onFolderNameChange = { newText ->
-                    folderNameInput = newText // Update folder name input state
+                    folderNameInput = newText
                 },
                 onFolderCreated = { folderName ->
-                    // Create folder and close the dialog
-                    FolderManager.createFolder(folderName)
+                    FolderManager.createFolder(currentParentFolder, folderName)
+                    folders.clear()  // Refresh the list after folder creation
+                    folders.addAll(FolderManager.getRootFolders())  // Reload folders
                     showDialog = false
                 }
             )
         }
 
-        val context = LocalContext.current
-        // Display the list of folders
-        FolderFunctionality().DisplayFolders(folders.toList()) { folder ->
-            // Handle folder click
 
-            Toast.makeText(context, "Clicked on folder: ${folder.name}", Toast.LENGTH_SHORT).show()
+
+        // Display subfolders of this folder
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 100.dp) // Adjust padding to place it below the top row
+        ) {
+
         }
-
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 100.dp) // Adjust padding to place it below the top row
+        ) {
+            // Loop through the folders and create buttons for each one
+            folders.forEach { folder ->
+                Button(
+                    onClick = {
+                        // If the folder has subfolders, navigate to the folder's detail view
+                        if (folder.subfolders.isNotEmpty()) {
+                            // Add current folder to history stack
+                            folderHistory = folderHistory + folder
+                            navController.navigate("folderDetail/${folder.name}")
+                        } else {
+                            // If the folder is empty, just open it as the detail view
+                            navController.navigate("folderDetail/${folder.name}")
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(16.dp) // Adjust padding as needed
+                ) {
+                    Text(text = folder.name)
+                }
+            }
+        }
     }
 }
 
@@ -175,6 +209,10 @@ fun TitleScreen(modifier: Modifier = Modifier) {
 @Composable
 fun TitleScreenPreview() {
     PrecisionTheme {
-        TitleScreen()
+        // Pass the required parameters: modifier and navController
+        TitleScreen(
+            modifier = Modifier.fillMaxSize(),
+            navController = rememberNavController()
+        )
     }
 }
