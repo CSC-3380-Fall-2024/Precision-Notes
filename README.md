@@ -21,8 +21,7 @@ Flashcards Functionality:
 
 
 FormulaLib:
-  Contains a list of calulcator functions and calculations to allow for faster computations for users. (This will work in conjuction with the calculation application.)
-
+The formula library is a class library that contains a list of math formulas that can be outputed as text
 Main GUI:
   Provides an usable user interface for the "main" or central hub within our application. This hub will lead to other functionalities and sections. These include: Calculator and Flashcards, along with Note Creation and editing.
 
