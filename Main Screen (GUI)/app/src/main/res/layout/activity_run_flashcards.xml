@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvRunHeader"
+        android:layout_width="112dp"
+        android:layout_height="60dp"
+        android:background="#FFC107"
+        android:gravity="center"
+        android:text="Header"
+        android:textColor="#673AB7"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="149dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <TextView
+        android:id="@+id/tvQuestion"
+        android:layout_width="0dp"
+        android:layout_height="79dp"
+        android:gravity="center"
+        android:hint="question"
+        android:text="questionPlaceHolder"
+        android:textSize="24sp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="100dp"
+        tools:layout_editor_absoluteY="154dp" />
+
+    <EditText
+        android:id="@+id/tml_Answer"
+        android:layout_width="384dp"
+        android:layout_height="87dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="answer"
+        android:inputType="textMultiLine"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="11dp"
+        tools:layout_editor_absoluteY="260dp" />
+
+    <Button
+        android:id="@+id/btn_Check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="check"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="388dp" />
+
+    <Button
+        android:id="@+id/btn_Quit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="quit"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="593dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

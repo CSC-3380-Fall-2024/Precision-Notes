@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btn_Run"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="176dp"
+        android:text="RUN"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvManageFlashcards"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btn_Edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EDIT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_Load"
+        app:layout_constraintHorizontal_bias="0.055"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvManageFlashcards"
+        tools:ignore="MissingConstraints,DuplicateClickableBoundsCheck" />
+
+    <Button
+        android:id="@+id/btn_Load"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="88dp"
+        android:text="LOAD"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_Run"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btn_Save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="320dp"
+        android:text="SAVE"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.78"
+        app:layout_constraintStart_toEndOf="@+id/btn_Load"
+        app:layout_constraintTop_toBottomOf="@+id/tvManageFlashcards"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/tvManageFlashcards"
+        android:layout_width="408dp"
+        android:layout_height="39dp"
+        android:background="#FFEB3B"
+        android:gravity="center"
+        android:text="MANAGE"
+        android:textColor="#3F51B5"
+        android:textStyle="bold"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btn_Quit2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="QUIT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_Save"
+        app:layout_constraintStart_toEndOf="@+id/btn_Edit"
+        app:layout_constraintTop_toBottomOf="@+id/btn_Load"
+        tools:ignore="MissingConstraints" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

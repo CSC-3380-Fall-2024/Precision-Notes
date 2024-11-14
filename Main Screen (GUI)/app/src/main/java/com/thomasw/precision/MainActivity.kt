@@ -1,5 +1,6 @@
 package com.thomasw.precision
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,10 +37,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+
 @Composable
 fun TitleScreen(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     var expandedCreate by remember { mutableStateOf(false) }
     var expandedSettings by remember { mutableStateOf(false) }
+
 
     Box(modifier = modifier.fillMaxSize()) {
         // Top Bar
@@ -78,9 +84,15 @@ fun TitleScreen(modifier: Modifier = Modifier) {
                         )
                     }
                 )
+
+
                 DropdownMenuItem(
                     text = { Text("Flashcard") },
-                    onClick = { /* Handle Create Flashcard */ },
+                    onClick = {
+
+                        val intent = Intent(context, MainActivity_Flashcards::class.java)
+                        context.startActivity(intent)
+                    },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Rounded.Style,
