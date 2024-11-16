@@ -19,6 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thomasw.precision.ui.theme.PrecisionTheme
 
+//folder imports -- Konor
+import com.thomasw.precision.FolderFunctionality.*
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import android.widget.Toast
+import androidx.compose.ui.text.input.TextFieldValue
+
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             PrecisionTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TitleScreen(
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    FolderFunctionality().AppNavigation()
                 }
             }
         }
@@ -36,9 +42,52 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TitleScreen(modifier: Modifier = Modifier) {
+fun TitleScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    parentFolder: Folder? // Accept parent folder to display its subfolders
+) {
     var expandedCreate by remember { mutableStateOf(false) }
     var expandedSettings by remember { mutableStateOf(false) }
+
+    // folders state
+    var showDialog by remember { mutableStateOf(false) }
+    var folderNameInput by remember { mutableStateOf(TextFieldValue()) }
+    var currentParentFolder by remember { mutableStateOf<Folder?>(parentFolder) }  // Use parentFolder
+
+    // Determine the folders to show based on the parentFolder
+    val folders = remember(currentParentFolder) {
+        mutableStateListOf<Folder>().apply {
+            // If parentFolder is null, show root folders; otherwise, show subfolders of the current parent
+            if (currentParentFolder == null) {
+                // If no parent folder, show root folders
+                addAll(FolderManager.getRootFolders())
+            } else {
+                // Show subfolders of the current parent folder
+                addAll(currentParentFolder?.let { FolderManager.getSubfolders(it) } ?: emptyList())
+            }
+        }
+    }
+
+    // Folder creation dialog
+    if (showDialog) {
+        FolderFunctionality().FolderNameDialog(
+            showDialog = showDialog,
+            folderNameInput = folderNameInput,
+            onFolderNameChange = { newText -> folderNameInput = newText },
+            onFolderCreated = { folderName ->
+                FolderManager.createFolder(currentParentFolder, folderName)
+                // Update the folder list after creation
+                folders.clear()
+                if (currentParentFolder == null) {
+                    folders.addAll(FolderManager.getRootFolders())
+                } else {
+                    folders.addAll(currentParentFolder?.let { FolderManager.getSubfolders(it) } ?: emptyList())
+                }
+                showDialog = false
+            }
+        )
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         // Top Bar
@@ -90,13 +139,27 @@ fun TitleScreen(modifier: Modifier = Modifier) {
                 )
                 DropdownMenuItem(
                     text = { Text("Folder") },
-                    onClick = { /* Handle Create Folder */ },
+                    onClick = { /* Handle Create Folder */
+                        expandedCreate = false
+                        showDialog = true
+                    },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Rounded.Folder,
                             contentDescription = "Folder Icon"
                         )
                     }
+                )
+            }
+
+            // Back Button (Top Left)
+            IconButton(onClick = {
+                // Simply pop the current screen from the navigation stack
+                navController.navigateUp()
+            }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back Button"
                 )
             }
 
@@ -152,13 +215,40 @@ fun TitleScreen(modifier: Modifier = Modifier) {
                 }
             }
         }
+
+        // Display subfolders or root folders
+        Row(modifier = Modifier.padding(top = 100.dp)) {
+            folders.forEach { folder ->
+                Button(
+                    onClick = {
+                        // When a folder is clicked, navigate to a new TitleScreen with the clicked folder as the parent
+                        navController.navigate("titleScreen/${folder.name}")
+                    },
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(text = folder.name)
+                }
+            }
+        }
     }
 }
+
+
+
+
 
 @Preview(showBackground = true)
 @Composable
 fun TitleScreenPreview() {
     PrecisionTheme {
-        TitleScreen()
+        // Mock data for preview
+        val mockParentFolder: Folder? = null // or provide a mock Folder instance
+
+        // Preview of TitleScreen with mock data
+        TitleScreen(
+            parentFolder = mockParentFolder,
+            modifier = Modifier.fillMaxSize(),
+            navController = rememberNavController()
+        )
     }
 }
