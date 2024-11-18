@@ -1,7 +1,6 @@
 package com.thomasw.precision
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,15 +14,20 @@ import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.thomasw.precision.ui.theme.PrecisionTheme
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.platform.LocalContext
+
+//folder class file -- Konor
+import com.thomasw.precision.FolderFunctionality.*
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.thomasw.precision.ui.ExportPopup
-import com.thomasw.precision.ui.theme.PrecisionTheme
+
+import android.widget.Toast
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,15 +46,14 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) } // State for folder creation dialog visibility
-    var showExportPopup by remember { mutableStateOf(false) } // State for export popup visibility
+    var showDialog by remember { mutableStateOf(false) }  // State for dialog visibility
     var folderNameInput by remember { mutableStateOf(TextFieldValue()) } // State for folder name input
-    var currentParentFolder by remember { mutableStateOf<Folder?>(null) } // Track current parent folder for subfolders
+    var currentParentFolder by remember { mutableStateOf<Folder?>(null) }  // Track current parent folder for subfolders
     val folders = remember { mutableStateListOf(*FolderManager.getRootFolders().toTypedArray()) } // Observe root folders
-    val context = LocalContext.current // Context for handling toast messages
 
     // Track folder history for back navigation
     var folderHistory by remember { mutableStateOf(listOf<Folder>()) }
+
 
     Box(modifier = modifier.fillMaxSize()) {
         // Top Bar
@@ -69,12 +72,12 @@ fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
                 )
             }
 
-            // DropdownMenu
+            //region DropdownMenu
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                // Notebook Option
+                //region NoteBook
                 DropdownMenuItem(
                     text = { Text("Notebook") },
                     onClick = { /* Handle Create Notebook */ },
@@ -85,8 +88,8 @@ fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
                         )
                     }
                 )
-
-                // Flashcard Option
+                //endregion
+                //region Flashcard
                 DropdownMenuItem(
                     text = { Text("Flashcard") },
                     onClick = { /* Handle Create Flashcard */ },
@@ -97,13 +100,15 @@ fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
                         )
                     }
                 )
-
-                // Folder Option
+                //endregion
+                //region Folder
                 DropdownMenuItem(
                     text = { Text("Folder") },
-                    onClick = {
-                        expanded = false
+                    onClick = { /* Handle Create Folder */
+                        expanded = false;
                         showDialog = true
+                        //FolderManager.createFolder(folderNameInput);
+                        //folderCounter.value++;
                     },
                     leadingIcon = {
                         Icon(
@@ -112,22 +117,9 @@ fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
                         )
                     }
                 )
-
-                // Export as PDF Option
-                DropdownMenuItem(
-                    text = { Text("Export as PDF") },
-                    onClick = {
-                        expanded = false
-                        showExportPopup = true
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Export PDF Icon"
-                        )
-                    }
-                )
+                //endregion
             }
+            //endregion
 
             // App Name in the Center
             Text(
@@ -139,7 +131,7 @@ fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
             // Row for the right-side buttons
             Row {
                 // Export/Share Button (Left of Settings)
-                IconButton(onClick = { showExportPopup = true }) {
+                IconButton(onClick = { /* Add Share Button functionality */ }) {
                     Icon(
                         imageVector = Icons.Default.Share,
                         contentDescription = "Share Button"
@@ -166,27 +158,14 @@ fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
                 },
                 onFolderCreated = { folderName ->
                     FolderManager.createFolder(currentParentFolder, folderName)
-                    folders.clear() // Refresh the list after folder creation
-                    folders.addAll(FolderManager.getRootFolders()) // Reload folders
+                    folders.clear()  // Refresh the list after folder creation
+                    folders.addAll(FolderManager.getRootFolders())  // Reload folders
                     showDialog = false
                 }
             )
         }
 
-        // Export Popup
-        ExportPopup(
-            showPopup = showExportPopup,
-            context = context,
-            onDismiss = { showExportPopup = false },
-            onExport = { fileName ->
-                val success = saveNotebookAsPDF(context, fileName)
-                if (success) {
-                    Toast.makeText(context, "Exported to Documents/$fileName.pdf", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(context, "Export failed!", Toast.LENGTH_LONG).show()
-                }
-            }
-        )
+
 
         // Display subfolders of this folder
         Column(
@@ -194,15 +173,24 @@ fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
                 .fillMaxWidth()
                 .padding(top = 100.dp) // Adjust padding to place it below the top row
         ) {
+
+        }
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 100.dp) // Adjust padding to place it below the top row
+        ) {
+            // Loop through the folders and create buttons for each one
             folders.forEach { folder ->
                 Button(
                     onClick = {
+                        // If the folder has subfolders, navigate to the folder's detail view
                         if (folder.subfolders.isNotEmpty()) {
-                            // Navigate to folder's detail view
+                            // Add current folder to history stack
                             folderHistory = folderHistory + folder
                             navController.navigate("folderDetail/${folder.name}")
                         } else {
-                            // Open empty folder detail view
+                            // If the folder is empty, just open it as the detail view
                             navController.navigate("folderDetail/${folder.name}")
                         }
                     },
@@ -216,10 +204,12 @@ fun TitleScreen(modifier: Modifier = Modifier, navController: NavController) {
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun TitleScreenPreview() {
     PrecisionTheme {
+        // Pass the required parameters: modifier and navController
         TitleScreen(
             modifier = Modifier.fillMaxSize(),
             navController = rememberNavController()
