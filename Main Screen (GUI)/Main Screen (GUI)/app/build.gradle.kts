@@ -58,11 +58,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Folder dependencies
+    //folder dependencies
     implementation ("androidx.navigation:navigation-compose:2.5.3") // Navigation Compose
     implementation ("androidx.compose.ui:ui:1.5.0") // Compose UI
     implementation ("androidx.compose.material3:material3:1.0.0") // Material3
     implementation ("androidx.activity:activity-compose:1.6.1") // Activity Compose
+
 
     val nav_version = "2.8.3"
 
@@ -79,6 +80,5 @@ dependencies {
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
 
-    // PDF Export dependencies
-    implementation("androidx.core:core-ktx:1.10.1")
+
 }
