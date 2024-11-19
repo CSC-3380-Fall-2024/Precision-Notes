@@ -1,4 +1,3 @@
-
 package com.thomasw.precision
 import android.content.Context
 import android.graphics.Canvas
@@ -14,6 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+
+//pens and inks
+import  android.app.Dialog
+import android.widget.ImageButton
+import androidx.core.content.ContextCompat
+
 
 @Composable
 fun NotesPageWithDrawing() {
@@ -182,4 +187,49 @@ class DrawingCanvasView @JvmOverloads constructor(
         cursorPosition = null
         invalidate()
     }
+
+//    private fun showPenSizeChooserDialog() {
+//        val penDialog = Dialog(this)
+//        penDialog.setContentView(R.layout.dialog_pen_size)
+//        penDialog.setTitle("Pen size: ")
+//        val smallBtn = penDialog.findViewById<View>(R.id.ib_small_pen)
+//        val mediumBtn = penDialog.findViewById<View>(R.id.ib_medium_pen)
+//        val largeBtn = penDialog.findViewById<View>(R.id.ib_large_pen)
+//        // Small size Pen
+//        smallBtn?.setOnClickListener {
+//            drawingView?.setSizeForPen(10.toFloat())
+//            penDialog.dismiss()
+//        }
+//        // Medium size Pen
+//        mediumBtn?.setOnClickListener {
+//            drawingView?.setSizeForPen(20.toFloat())
+//            penDialog.dismiss()
+//        }
+//        // Large size pen
+//        largeBtn?.setOnClickListener {
+//            drawingView?.setSizeForPen(30.toFloat())
+//            penDialog.dismiss()
+//        }
+//        // Shows pen dialog
+//        penDialog.show()
+//    }
+//
+//    fun colorClicked(view: View){
+//        if(view !== mImageButtonCurrentPaint){
+//            val imageButton = view as ImageButton
+//            val colorTag = imageButton.tag.toString()
+//            drawingView?.setColor(colorTag)
+//
+//            imageButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.pallet_pressed)
+//
+//            )
+//            mImageButtonCurrentPaint?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.pallet_normal)
+//
+//            )
+//
+//
+//            mImageButtonCurrentPaint = view
+//
+//        }
+//    }
 }

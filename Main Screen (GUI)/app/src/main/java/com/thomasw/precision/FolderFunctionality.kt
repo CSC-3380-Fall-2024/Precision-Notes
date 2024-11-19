@@ -36,13 +36,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 
-
-
-
-
 class FolderFunctionality {
     @Composable
-    fun AppNavigation() {
+    fun FolderAppNavigation() {
         val navController = rememberNavController()
 
         NavHost(
