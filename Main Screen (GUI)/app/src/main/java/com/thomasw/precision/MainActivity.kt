@@ -1,6 +1,7 @@
 package com.thomasw.precision
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,7 +25,9 @@ import com.thomasw.precision.FolderFunctionality.*
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import android.widget.Toast
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.text.input.TextFieldValue
+
 
 
 class MainActivity : ComponentActivity() {
@@ -40,6 +43,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Composable
 fun TitleScreen(
@@ -117,9 +121,17 @@ fun TitleScreen(
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+
+
+
+
                 DropdownMenuItem(
                     text = { Text("Notebook") },
-                    onClick = { /* Handle Create Notebook */ },
+                    onClick = {
+                        expandedCreate = false
+                        Log.d("TitleScreen", "Navigating to NotesPage")
+                        navController.navigate("NotesPage") // Navigate to the NotesPage route},
+                    },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Rounded.Book,
@@ -158,7 +170,7 @@ fun TitleScreen(
                 navController.navigateUp()
             }) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back Button"
                 )
             }

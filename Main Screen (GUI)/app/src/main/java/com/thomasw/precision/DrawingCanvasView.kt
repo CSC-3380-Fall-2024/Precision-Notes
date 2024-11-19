@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
 fun NotesPageWithDrawing() {
+    println("Navigating to NotesPageWithDrawing DRAWING CANVAS")
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -23,19 +26,50 @@ fun NotesPageWithDrawing() {
         AndroidView(
             factory = { context ->
                 DrawingCanvasView(context).apply {
-                    setBackgroundColor(Color.WHITE) // Optional: Explicitly set the background
+                    setBackgroundColor(Color.WHITE)
+                    this.isFocusable = true
+                    this.isFocusableInTouchMode = true// Optional: Explicitly set the background
                 }
+
             },
             modifier = Modifier.fillMaxSize()
+
         )
     }
 }
 class DrawingCanvasView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : View(context, attrs) {
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (typingEnabled) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DEL -> {
+                    // Handle backspace
+                    if (currentText.isNotEmpty()) {
+                        currentText.deleteCharAt(currentText.length - 1)
+                    }
+                }
+                else -> {
+                    val char = event?.unicodeChar?.toChar()
+                    if (char != null && char.isLetterOrDigit()) {
+                        currentText.append(char)
+                    }
+                }
+            }
+            invalidate()
+            return true // Indicate the event was handled
+        }
+        return super.onKeyDown(keyCode, event)
+    }
 
-    // Paint object for styling and drawing paths
-    private val paint = Paint().apply {
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (typingEnabled && keyCode == KeyEvent.KEYCODE_ENTER) {
+            finishTyping() // Finalize the current text entry
+            return true // Indicate the event was handled
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+    private val pathPaint = Paint().apply {
         color = Color.BLACK
         isAntiAlias = true
         strokeWidth = 8f
@@ -44,43 +78,108 @@ class DrawingCanvasView @JvmOverloads constructor(
         strokeCap = Paint.Cap.ROUND
     }
 
-    // Path object to store the drawing path
+    private val textPaint = Paint().apply {
+        color = Color.BLUE
+        textSize = 50f
+        isAntiAlias = true
+    }
+
     private val path = Path()
+    private val texts = mutableListOf<Pair<String, Pair<Float, Float>>>()
+
+    private var typingEnabled = false
+    private var currentText = StringBuilder()
+    private var cursorPosition: Pair<Float, Float>? = null
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        // Check if the input is from a stylus
-        if (event.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS || event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER) {
-            val x = event.x
-            val y = event.y
+        val x = event.x
+        val y = event.y
+        val toolType = event.getToolType(0)
 
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    path.moveTo(x, y)
-                    return true
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                when (toolType) {
+                    MotionEvent.TOOL_TYPE_MOUSE -> {
+                        // Enable text input on mouse click
+                        cursorPosition = Pair(x, y)
+                        typingEnabled = true
+                        invalidate()
+                    }
+                    MotionEvent.TOOL_TYPE_FINGER, MotionEvent.TOOL_TYPE_STYLUS -> {
+                        // Enable drawing
+                        typingEnabled = false
+                        path.moveTo(x, y)
+                        return true
+                    }
                 }
-                MotionEvent.ACTION_MOVE -> {
+            }
+            MotionEvent.ACTION_MOVE -> {
+                if (toolType == MotionEvent.TOOL_TYPE_FINGER || toolType == MotionEvent.TOOL_TYPE_STYLUS) {
                     path.lineTo(x, y)
                 }
-                MotionEvent.ACTION_UP -> {
-                    // Nothing to do here, path will stay on the canvas
-                }
-                else -> return false
             }
-            // Request to redraw the view
-            invalidate()
+            MotionEvent.ACTION_UP -> {
+                // Optional: Do something when touch is lifted
+            }
         }
+        invalidate()
         return true
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        // Draw the current path on the canvas
-        canvas.drawPath(path, paint)
+        // Draw the drawing paths
+        canvas.drawPath(path, pathPaint)
+
+        // Draw the existing text
+        texts.forEach { (text, position) ->
+            canvas.drawText(text, position.first, position.second, textPaint)
+        }
+
+        // Draw the current typing text
+        cursorPosition?.let { position ->
+            if (typingEnabled && currentText.isNotEmpty()) {
+                canvas.drawText(currentText.toString(), position.first, position.second, textPaint)
+            }
+        }
     }
 
-    // Method to clear the canvas
+    fun addTypedText(keyCode: Int) {
+        if (typingEnabled) {
+            when (keyCode) {
+                android.view.KeyEvent.KEYCODE_DEL -> {
+                    // Handle backspace
+                    if (currentText.isNotEmpty()) {
+                        currentText.deleteCharAt(currentText.length - 1)
+                    }
+                }
+                else -> {
+                    val char = android.view.KeyEvent.keyCodeToString(keyCode).replace("KEYCODE_", "").firstOrNull()
+                    if (char != null) {
+                        currentText.append(char)
+                    }
+                }
+            }
+            invalidate()
+        }
+    }
+
+    fun finishTyping() {
+        if (typingEnabled && currentText.isNotEmpty() && cursorPosition != null) {
+            texts.add(currentText.toString() to cursorPosition!!)
+            currentText.clear()
+            typingEnabled = false
+            cursorPosition = null
+            invalidate()
+        }
+    }
+
     fun clearCanvas() {
         path.reset()
+        texts.clear()
+        currentText.clear()
+        typingEnabled = false
+        cursorPosition = null
         invalidate()
     }
-}     
+}

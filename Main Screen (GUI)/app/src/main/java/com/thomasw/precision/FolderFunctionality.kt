@@ -49,6 +49,9 @@ class FolderFunctionality {
             navController = navController,
             startDestination = "titleScreen"
         ) {
+            composable("NotesPage") {
+                NotesPageWithDrawing()
+            }
             composable("titleScreen") {
                 // Initial screen showing root folders
                 TitleScreen(
@@ -56,6 +59,7 @@ class FolderFunctionality {
                     modifier = Modifier.fillMaxSize(),
                     navController = navController
                 )
+
             }
 
             // This route handles opening TitleScreen for a specific folder's subfolders
