@@ -33,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import android.widget.Toast
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.text.input.TextFieldValue
+import com.google.accompanist.flowlayout.FlowRow
 
 
 
@@ -250,17 +251,31 @@ fun TitleScreen(
         )
 
 
-        // Display subfolders or root folders
-        Row(modifier = Modifier.padding(top = 100.dp)) {
+        // Inside the TitleScreen function, replace the Row for displaying folders:
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp,top = 96.dp),
+            mainAxisSpacing = 16.dp, // Spacing between items horizontally
+            crossAxisSpacing = 16.dp // Spacing between items vertically
+        ) {
             folders.forEach { folder ->
                 Button(
                     onClick = {
                         // When a folder is clicked, navigate to a new TitleScreen with the clicked folder as the parent
                         navController.navigate("titleScreen/${folder.name}")
                     },
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(4.dp) // Adjust padding for individual buttons
                 ) {
-                    Text(text = folder.name)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Folder, // Use a folder icon
+                            contentDescription = "Folder Icon",
+                            modifier = Modifier.size(20.dp) // Adjust size as needed
+                        )
+                        Spacer(modifier = Modifier.width(8.dp)) // Add space between icon and text
+                        Text(text = folder.name)
+                    }
                 }
             }
         }

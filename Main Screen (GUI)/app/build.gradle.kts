@@ -86,4 +86,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.5.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
+    // Wraps folders to next line
+    implementation ("com.google.accompanist:accompanist-flowlayout:0.36.0")
+
 }
