@@ -1,6 +1,7 @@
 package com.thomasw.precision
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,12 +20,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thomasw.precision.ui.theme.PrecisionTheme
 
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Settings
+import androidx.navigation.compose.rememberNavController
+import com.thomasw.precision.ui.PensPopup
+import com.thomasw.precision.ui.NotebookPreferencesPopup
+
 //folder imports -- Konor
-import com.thomasw.precision.FolderFunctionality.*
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import android.widget.Toast
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.text.input.TextFieldValue
+
 
 
 class MainActivity : ComponentActivity() {
@@ -34,12 +43,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             PrecisionTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    FolderFunctionality().AppNavigation()
+                    FolderFunctionality().FolderAppNavigation()
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun TitleScreen(
@@ -54,6 +64,12 @@ fun TitleScreen(
     var showDialog by remember { mutableStateOf(false) }
     var folderNameInput by remember { mutableStateOf(TextFieldValue()) }
     var currentParentFolder by remember { mutableStateOf<Folder?>(parentFolder) }  // Use parentFolder
+
+    //pens popup
+    var showPensPopup by remember { mutableStateOf(false) }
+
+    //notebook preferences popup
+    var showNotebookPreferencesPopup by remember { mutableStateOf(false) }
 
     // Determine the folders to show based on the parentFolder
     val folders = remember(currentParentFolder) {
@@ -117,9 +133,17 @@ fun TitleScreen(
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+
+
+
+
                 DropdownMenuItem(
                     text = { Text("Notebook") },
-                    onClick = { /* Handle Create Notebook */ },
+                    onClick = {
+                        expandedCreate = false
+                        Log.d("TitleScreen", "Navigating to NotesPage")
+                        navController.navigate("NotesPage") // Navigate to the NotesPage route},
+                    },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Rounded.Book,
@@ -158,7 +182,7 @@ fun TitleScreen(
                 navController.navigateUp()
             }) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back Button"
                 )
             }
@@ -172,49 +196,59 @@ fun TitleScreen(
                 )
             }
 
-            // Row for the right-side buttons
-            Row {
-                // Export/Share Button (Left of Settings)
-                IconButton(onClick = { /* Add Share Button functionality */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share Button"
-                    )
-                }
+            //Right-side buttons
+                    Row {
+                        IconButton(onClick = { /* Add Share functionality */ }) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Share Button"
+                            )
+                        }
 
-                // Settings Button with Dropdown (Top Right)
-                IconButton(onClick = { expandedSettings = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings Button"
-                    )
-                }
-                DropdownMenu(
-                    expanded = expandedSettings,
-                    onDismissRequest = { expandedSettings = false }
-                ) {
-                    // "Settings:" Header
-                    Text(
-                        text = "Settings:",
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Pens") },
-                        onClick = { /* Handle Pens Settings */ }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Notebook Preferences") },
-                        onClick = { /* Handle Notebook Preferences */ }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Defaults") },
-                        onClick = { /* Handle Defaults */ }
-                    )
-                }
-            }
+                        IconButton(onClick = { expandedSettings = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings Button"
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = expandedSettings,
+                            onDismissRequest = { expandedSettings = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Pens") },
+                                onClick = {
+                                    expandedSettings = false
+                                    showPensPopup = true
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Notebook Preferences") },
+                                onClick = {
+                                    expandedSettings = false
+                                    showNotebookPreferencesPopup = true
+                                }
+                            )
+                        }
+                    }
         }
+
+        PensPopup(
+            showPopup = showPensPopup,
+            onDismiss = { showPensPopup = false },
+            onSizeChange = { /* Handle size change */ },
+            onColorChange = { /* Handle color change */ }
+        )
+
+        NotebookPreferencesPopup(
+            showPopup = showNotebookPreferencesPopup,
+            onDismiss = { showNotebookPreferencesPopup = false },
+            onColorChange = { /* Handle color change */ },
+            onBackgroundTypeChange = { /* Handle background type change */ },
+            onImageImport = { /* Handle image import */ }
+        )
+
 
         // Display subfolders or root folders
         Row(modifier = Modifier.padding(top = 100.dp)) {
