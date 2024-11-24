@@ -61,11 +61,12 @@ dependencies {
     //folder dependencies
     implementation ("androidx.navigation:navigation-compose:2.5.3") // Navigation Compose
     implementation ("androidx.compose.ui:ui:1.5.0") // Compose UI
-    implementation ("androidx.compose.material3:material3:1.1.0") // Material3
+    implementation ("androidx.compose.material3:material3:1.3.1") // Material3
     implementation ("androidx.activity:activity-compose:1.6.1") // Activity Compose
 
 
     val nav_version = "2.8.3"
+    val jlatexmath_version = "0.2.0"
 
     // Jetpack Compose integration
     implementation("androidx.navigation:navigation-compose:$nav_version")
@@ -85,8 +86,22 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
     implementation("androidx.compose.foundation:foundation:1.5.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation ("androidx.compose.material:material:1.5.1")
 
     // Wraps folders to next line
     implementation ("com.google.accompanist:accompanist-flowlayout:0.36.0")
+
+    // JLaTeXMath dependencies
+    implementation("ru.noties:jlatexmath-android:$jlatexmath_version")
+    implementation("ru.noties:jlatexmath-android-font-cyrillic:$jlatexmath_version")
+    implementation("ru.noties:jlatexmath-android-font-greek:$jlatexmath_version")
+
+    implementation ("androidx.compose.runtime:runtime:1.5.0")
+
+
+
+
+
+
 
 }
