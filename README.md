@@ -3,6 +3,8 @@
 Hi and Welcome to our Project "Precision-Notes"!
 Created by: Amy Granados, Cole Heausler, Konnor, Kendrick and Thomas Woodcum
 
+We are/were currently students at LSU (Louisiana State Univeristy), taking a project class: 3380 Object-Orientated Design.
+
 
 Goal: 
 The goal of this application is to create a interactive applicative with note-taking properties. The application consists of a general homepage, with several subfunctions (Calculator, Flashcards, etc.)
