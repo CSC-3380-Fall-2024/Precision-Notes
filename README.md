@@ -45,11 +45,19 @@ Use guide for our Application:
     The "FLASHCARDS" are supposed to a helpful tool for users to use in order to learn material and practice memorization. It is designed for students in mind but, can also be used by other demographics.
     The application works as follows:
 
-    1)  TITLE SCREEN 
+   1)  **TITLE SCREEN **
         It initially opens up to a title screen, upon clicking the button it directs the users to the management section.
 
+        **(+) TAB **
 
-    2)   MANAGEMENT LIST
+a) NOTEBOOK
+  Upon clicking the NOTEBOOK tab a blank page will appear. On this page user's are able to draw whatever they wish upon clicking the screen. Currently, users have to leave
+
+  ![Screenshot 2024-11-25 165838](https://github.com/user-attachments/assets/3a5bf3ec-f41f-4c18-bc43-b757da558502)
+
+b) FLASHCARD
+
+    MANAGEMENT LIST
         The management list is a series of buttons of which each focusing on a different purpose.
 
           --"EDIT"
@@ -67,6 +75,12 @@ Use guide for our Application:
 
           --"QUIT"
             This quits the application bringing the user back to the "MAIN" of the application to allow them to access other functions of our application.
+
+c) FOLDER
+
+              
+
+
 
 
     
