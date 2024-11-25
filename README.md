@@ -61,25 +61,31 @@ a) NOTEBOOK
 b) FLASHCARD
 
    MANAGEMENT LIST
+   
         The management list is a series of buttons of which each focusing on a different purpose.
 
   --"EDIT"
+            
             Edit is self-explanitory, it opens up a display UI allowing users to edit the type of question presented on the flashcard and the answer. Users can also create several other flashcards here with the "NEXT" which opens up a new card while also allowing them to move between cards with the "PREVIOUS" button. The "DELETE" button deletes the current flashcard out of the current list.
 
   --"LOAD"
+            
             The "LOAD" button allows users to load flashcards without making edits, this is to allow users to practice while still being presented with the answer that they provided inside of the "EDIT" section. This is different compared to the "RUN" function. (See Below)
 
   --"SAVE"
+           
             Saves the current flashcard list present in the "EDIT" button. Users must hit SAVE before entering to practice otherwise, the flashcards will be displayed with the default inofrmation. 
 
    --"RUN"
-            This runs the currently saved flashcards, putting them into a type-in-answer style practice session. The information present in the flashcard here is stored away and not present to the user. WHen inputting an answer to check if the response is correct, a Android Toast will appear at the bottom of the page. This Toast will confirm or deny whether the user inputted the answer saved to the flashcard correctly.
-            Users may also hit the "NEXT" and "PREVIOUS" buttons to cycle between saved flashcards in order to maximize effective practice.
+           
+            This runs the currently saved flashcards, putting them into a type-in-answer style practice session. The information present in the flashcard here is stored away and not present to the user. WHen inputting an answer to check if the response is correct, a Android Toast will appear at the bottom of the page. This Toast will confirm or deny whether the user inputted the answer saved to the flashcard correctly. Users may also hit the "NEXT" and "PREVIOUS" buttons to cycle between saved flashcards in order to maximize effective practice.
 
    --"QUIT"
+            
             This quits the application bringing the user back to the "MAIN" of the application to allow them to access other functions of our application.
 
 c) FOLDER
+ 
   Upon clicking the FOLDER tab, users will be prompted to provide a name for the newly created folder. Upon selection a new folder will be created, users can click on the folder to access its contents.
 
   ![Screenshot 2024-11-25 170250](https://github.com/user-attachments/assets/48eb23b6-99c8-4501-a46d-9d0f4481d0ce)
