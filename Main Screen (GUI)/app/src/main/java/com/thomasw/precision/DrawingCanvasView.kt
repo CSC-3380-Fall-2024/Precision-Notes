@@ -23,11 +23,47 @@ import androidx.core.content.ContextCompat
 @Composable
 fun NotesPageWithDrawing() {
     println("Navigating to NotesPageWithDrawing DRAWING CANVAS")
+    var menuExpanded by remember { mutableStateOf(false) } // State to control dropdown visibility
 
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        // Dropdown menu trigger
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd) // Position at the top-right corner
+                .padding(16.dp)
+                .clickable { menuExpanded = true } // Open the menu on click
+        ) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "Menu",
+                tint = Color.Black
+            )
+        }
+
+        // Dropdown menu
+        DropdownMenu(
+            expanded = menuExpanded,
+            onDismissRequest = { menuExpanded = false }
+        ) {
+            DropdownMenuItem(onClick = {
+                menuExpanded = false
+                println("Clear Canvas Clicked")
+                // Call a function like drawingCanvasView.clearCanvas() here
+            }) {
+                Text("Clear Canvas")
+            }
+            DropdownMenuItem(onClick = {
+                menuExpanded = false
+                println("Save Drawing Clicked")
+                // Add functionality for saving the drawing here
+            }) {
+                Text("Save Drawing")
+            }
+        }
+    
         AndroidView(
             factory = { context ->
                 DrawingCanvasView(context).apply {
