@@ -3,7 +3,7 @@ package com.thomasw.precision.ui
 
 import androidx.compose.foundation.layout.* // For Column, Row, Spacer, etc.
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier // Import Modifier here
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -15,6 +15,9 @@ fun PensPopup(
     onSizeChange: (Float) -> Unit,
     onColorChange: (Color) -> Unit
 ) {
+    var selectedSize by remember { mutableStateOf(5f) }
+    var selectedColor by remember { mutableStateOf(Color.Black) }
+
     if (showPopup) {
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -24,19 +27,28 @@ fun PensPopup(
                     // Size Slider
                     Text("Size:")
                     Slider(
-                        value = 5f,  // Default size
-                        onValueChange = onSizeChange,
+                        value = selectedSize,
+                        onValueChange = { value ->
+                            selectedSize = value
+                            onSizeChange(value)
+                        },
                         valueRange = 1f..10f
                     )
 
                     // Color Selection Buttons
                     Text("Color:")
                     Row {
-                        Button(onClick = { onColorChange(Color.Black) }) { Text("Black") }
+                        Button(onClick = { selectedColor = Color.Black; onColorChange(Color.Black) }) {
+                            Text("Black")
+                        }
                         Spacer(modifier = Modifier.width(8.dp))
-                        Button(onClick = { onColorChange(Color.Red) }) { Text("Red") }
+                        Button(onClick = { selectedColor = Color.Red; onColorChange(Color.Red) }) {
+                            Text("Red")
+                        }
                         Spacer(modifier = Modifier.width(8.dp))
-                        Button(onClick = { onColorChange(Color.Blue) }) { Text("yellow") }
+                        Button(onClick = { selectedColor = Color.Blue; onColorChange(Color.Blue) }) {
+                            Text("Blue")
+                        }
                     }
                 }
             },
