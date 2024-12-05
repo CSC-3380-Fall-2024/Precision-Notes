@@ -29,13 +29,16 @@ import com.thomasw.precision.ui.NotebookPreferencesPopup
 
 //folder imports -- Konor
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import android.widget.Toast
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.text.input.TextFieldValue
 import com.google.accompanist.flowlayout.FlowRow
+import ru.noties.jlatexmath.JLatexMathView
 
 
+// Define the interface outside of the onCreate method
+//interface OnContentViewChangeListener {
+//    fun onChangeContentView()
+//}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +53,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+// Composable to represent the layout for the DrawingCanvasView
+//@Composable
+//fun DrawingCanvasViewLayout(listener: OnContentViewChangeListener?) {
+//    // Your layout for DrawingCanvasView
+//
+//    // Trigger the listener when some action happens
+//    listener?.onChangeContentView() // Example trigger for layout change
+//}
 
 
 @Composable
@@ -135,14 +147,12 @@ fun TitleScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-
-
-
                 DropdownMenuItem(
                     text = { Text("Notebook") },
                     onClick = {
                         expandedCreate = false
                         Log.d("TitleScreen", "Navigating to NotesPage")
+//                        MainActivity().onNotebookSelected()
                         navController.navigate("NotesPage") // Navigate to the NotesPage route},
                     },
                     leadingIcon = {
@@ -282,7 +292,13 @@ fun TitleScreen(
     }
 }
 
-
+@Composable
+fun NotesPage() {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        Text("This is the Notes Page!")
+        // Add more content/layout for the Notes page here
+    }
+}
 
 
 

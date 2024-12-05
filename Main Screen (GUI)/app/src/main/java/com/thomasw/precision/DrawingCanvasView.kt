@@ -1,11 +1,13 @@
 package com.thomasw.precision
 
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -17,18 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 
 
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.unit.dp
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.*
 import androidx.compose.material3.Text
 import androidx.compose.material3.Typography.*
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Icon
 
 
@@ -38,11 +37,13 @@ import androidx.compose.ui.Alignment
 
 
 //pens and inks
-import  android.app.Dialog
 import android.util.Log
-import android.widget.ImageButton
-import androidx.annotation.Nullable
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.Window
+import android.widget.FrameLayout
+import android.widget.PopupWindow
+import android.widget.RelativeLayout
 import androidx.compose.material.icons.rounded.Book
 import androidx.compose.material.icons.rounded.Folder
 import androidx.compose.material.icons.rounded.Style
@@ -54,11 +55,17 @@ import androidx.compose.foundation.layout.padding
 
 import androidx.compose.runtime.Composable
 
-import android.graphics.Color.BLACK as BlackColor
-import androidx.compose.ui.text.AnnotatedString
+import android.widget.TextView
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavController
+
 
 @Composable
-fun NotesPageWithDrawing() {
+fun NotesPageWithDrawing(
+    navController: NavController,
+) {
     println("Navigating to NotesPageWithDrawing DRAWING CANVAS")
 
     var expandedSettings by remember { mutableStateOf(false) }
@@ -72,8 +79,9 @@ fun NotesPageWithDrawing() {
     var expandedStatistics by remember { mutableStateOf(false) }
     var expandedLogarithms by remember { mutableStateOf(false) }
     var expandedStandardEquations by remember { mutableStateOf(false) }
-    //var subject by remember { mutableStateOf<Geometry?>(null) }
     var formula by remember { mutableStateOf("") }
+    val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
+
 
     Box(
         modifier = Modifier
@@ -85,7 +93,9 @@ fun NotesPageWithDrawing() {
                     setBackgroundColor(Color.WHITE)
                     this.isFocusable = true
                     this.isFocusableInTouchMode = true// Optional: Explicitly set the background
+                    drawingCanvasView.value = this // Store reference
                 }
+                //LayoutInflater.from(context).inflate(R.layout.`latex_view.txt`, null)
 
             },
             modifier = Modifier.fillMaxSize()
@@ -100,58 +110,15 @@ fun NotesPageWithDrawing() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Plus Button (Top Left) with Create Dropdown
-            androidx.compose.material3.IconButton(onClick = { expandedFormula = true }) {
+            // Back Button (Top Left)
+            androidx.compose.material3.IconButton(onClick = {
+                // Simply pop the current screen from the navigation stack
+                drawingCanvasView.value?.dismissPopups()
+                navController.navigateUp()
+            }) {
                 Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Plus Button"
-                )
-            }
-
-            androidx.compose.material3.DropdownMenu(
-                expanded = expandedFormula,
-                onDismissRequest = { expandedFormula = false }
-            ) {
-                // "Create New:" Header
-                Text(
-                    text = "Create New:",
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    fontSize = 16.sp,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
-                )
-
-
-
-
-                DropdownMenuItem(
-                    text = { Text("Notebook") },
-                    onClick = {   },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Book,
-                            contentDescription = "Notebook Icon"
-                        )
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Flashcard") },
-                    onClick = { /* Handle Create Flashcard */ },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Style,
-                            contentDescription = "Flashcard Icon"
-                        )
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Folder") },
-                    onClick = { /* Handle Create Folder */ },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Folder,
-                            contentDescription = "Folder Icon"
-                        )
-                    }
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back Button"
                 )
             }
 
@@ -232,38 +199,56 @@ fun NotesPageWithDrawing() {
                         onDismissRequest = { expandedFormula = false },
                         onSquareClick = {
                             expandedArea = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Area().square()
                         },
                         onRectangleClick = {
                             expandedArea = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Area().rectangle()
                         },
                         onTriangleClick = {
                             expandedArea = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Area().triangle()
                         },
                         onRhombusClick = {
                             expandedArea = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Area().rhombus()
                         },
                         onTrapezoidClick = {
                             expandedArea = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Area().trapezoid()
                         },
                         onPolygonClick = {
                             expandedArea = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Area().polygon()
                         },
                         onCircleClick = {
                             expandedArea = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Area().circle()
                         },
                         onConeClick = {
                             expandedArea = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Area().cone()
                         },
                         onSphereClick = {
                             expandedArea = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Area().sphere()
                         }
                     )
@@ -278,26 +263,38 @@ fun NotesPageWithDrawing() {
                         onDismissRequest = { expandedFormula = false },
                         onCubeClick = {
                             expandedVolume = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Volume().cube()
                         },
                         onParallelepipedClick = {
                             expandedVolume = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Volume().parallelepiped()
                         },
                         onPrismClick = {
                             expandedVolume = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Volume().prism()
                         },
                         onCylinderClick = {
                             expandedVolume = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Volume().cylinder()
                         },
                         onConeClick = {
                             expandedVolume = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Volume().cone()
                         },
                         onSphereClick = {
                             expandedVolume = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Volume().sphere()
                         }
                     )
@@ -312,30 +309,44 @@ fun NotesPageWithDrawing() {
                         onDismissRequest = { expandedFormula = false },
                         onPythagoreanTheoremClick = {
                             expandedGeometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Geometry().pythagoreanTheorem()
                         },
                         onDistanceClick = {
                             expandedGeometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Geometry().distance()
                         },
                         onMidpointClick = {
                             expandedGeometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Geometry().midpoint()
                         },
                         onSlopeInterceptClick = {
                             expandedGeometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Geometry().slopeIntercept()
                         },
                         onCircleEquationClick = {
                             expandedGeometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Geometry().circleEquation()
                         },
                         onSphereEquationClick = {
                             expandedGeometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Geometry().sphereEquation()
                         },
                         onEllipseEquationClick = {
                             expandedGeometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Geometry().ellipseEquation()
                         }
                     )
@@ -350,58 +361,86 @@ fun NotesPageWithDrawing() {
                         onDismissRequest = { expandedFormula = false },
                         onSinClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().sin()
                         },
                         onCosClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().cos()
                         },
                         onTanClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().tan()
                         },
                         onCscClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().csc()
                         },
                         onSecClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().sec()
                         },
                         onCotClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().cot()
                         },
                         onPythagoreanIdentitySinCosClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().pythagoreanIdentitySinCos()
                         },
                         onPythagoreanIdentityTanSecClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().pythagoreanIdentityTanSec()
                         },
                         onPythagoreanIdentityCscCotClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().pythagoreanIdentityCscCot()
                         },
                         onTanIdentityClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().tanIdentity()
                         },
                         onLawOfSinesClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().lawOfSines()
                         },
                         onLawOfCosinesClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().lawOfCosines()
                         },
                         onHeronFormulaAreaClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().heronFormulaArea()
                         },
                         onHeronFormulaSideClick = {
                             expandedTrigonometry = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Trigonometry().heronFormulaSide()
                         }
                     )
@@ -416,66 +455,98 @@ fun NotesPageWithDrawing() {
                         onDismissRequest = { expandedFormula = false },
                         onSlopeOfSecantLineClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().slopeOfSecantLine()
                         },
                         onRateOfChangeClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().rateOfChange()
                         },
                         onConstantClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().constant()
                         },
                         onConstantMultiplicationClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().constantMultiplication()
                         },
                         onPowerRuleClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().powerRule()
                         },
                         onExponentialClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().exponential()
                         },
                         onEulerExponentialClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().eulerExponential()
                         },
                         onSumRuleClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().sumRule()
                         },
                         onProductRuleClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().productRule()
                         },
                         onQuotientRuleClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().quotientRule()
                         },
                         onChainRuleClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().chainRule()
                         },
                         onSinClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().sin()
                         },
                         onCosClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().cos()
                         },
                         onTanClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().tan()
                         },
                         onLogClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().log()
                         },
                         onNaturalLogClick = {
                             expandedDerivatives = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Derivatives().naturalLog()
                         }
                     )
@@ -490,50 +561,74 @@ fun NotesPageWithDrawing() {
                         onDismissRequest = { expandedFormula = false },
                         onIntegralOfOneClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().integralOfOne()
                         },
                         onLogClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().log()
                         },
                         onEulerExponentialClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().eulerExponential()
                         },
                         onSinClick = {
                             expandedVolume = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().sin()
                         },
                         onCosClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().cos()
                         },
                         onLinearityAdditionClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().linearityAddition()
                         },
                         onLinearityConstantMultiplicationClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().linearityConstantMultiplication()
                         },
                         onIntegrationByPartsClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().integrationByParts()
                         },
                         onIntegralReversalPropertyClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().integralReversalProperty()
                         },
                         onIntegralZeroPropertyClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().integralZeroProperty()
                         },
                         onIntegralAdditivePropertyClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().integralAdditiveProperty()
                         },
                         onBarrowRuleClick = {
                             expandedIntegrals = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Integrals().barrowRule()
                         }
                     )
@@ -548,22 +643,32 @@ fun NotesPageWithDrawing() {
                         onDismissRequest = { expandedFormula = false },
                         onMeanClick = {
                             expandedStatistics = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Statistics().mean()
                         },
                         onMedianOddClick = {
                             expandedStatistics = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Statistics().medianOdd()
                         },
                         onMedianEvenClick = {
                             expandedStatistics = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Statistics().medianEven()
                         },
                         onVarianceClick = {
                             expandedStatistics = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Statistics().variance()
                         },
                         onStandardDeviationClick = {
                             expandedStatistics = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Statistics().standardDeviation()
                         },
                     )
@@ -578,26 +683,38 @@ fun NotesPageWithDrawing() {
                         onDismissRequest = { expandedFormula = false },
                         onLogOfOnePropertyClick = {
                             expandedLogarithms = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Logarithms().logOfOneProperty()
                         },
                         onLogInversePropertyClick = {
                             expandedLogarithms = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Logarithms().logInverseProperty()
                         },
                         onProductClick = {
                             expandedLogarithms = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Logarithms().product()
                         },
                         onQuotientClick = {
                             expandedLogarithms = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Logarithms().quotient()
                         },
                         onExponentialClick = {
                             expandedLogarithms = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Logarithms().exponential()
                         },
                         onChangeOfBaseClick = {
                             expandedLogarithms = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Logarithms().changeOfBase()
                         }
                     )
@@ -612,14 +729,20 @@ fun NotesPageWithDrawing() {
                         onDismissRequest = { expandedFormula = false },
                         onQuadraticPolynomialClick = {
                             expandedStandardEquations = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Statistics().mean()
                         },
                         onQuadraticFormulaClick = {
                             expandedStandardEquations = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Statistics().medianOdd()
                         },
                         onParabolaClick = {
                             expandedStandardEquations = false
+                            expandedFormula = false
+                            expandedSettings = false
                             formula = Statistics().medianEven()
                         }
                     )
@@ -627,7 +750,11 @@ fun NotesPageWithDrawing() {
             }
         }
 
-        RenderLatexFormula(formula)
+
+
+        if (formula.isNotEmpty()) {
+            drawingCanvasView.value?.ShowFormulaInOverlay(formula)
+        }
     }
 }
 
@@ -635,7 +762,15 @@ fun NotesPageWithDrawing() {
 
 class DrawingCanvasView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
-) : View(context, attrs) {
+) : FrameLayout(context, attrs) {
+
+    @Composable
+    fun ShowFormulaInOverlay(formula: String) {
+        //val context = LocalContext.current // Get the Context
+        showFormulaOverlay(formula)
+    }
+
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (typingEnabled) {
             when (keyCode) {
@@ -686,6 +821,7 @@ class DrawingCanvasView @JvmOverloads constructor(
     private var typingEnabled = false
     private var currentText = StringBuilder()
     private var cursorPosition: Pair<Float, Float>? = null
+
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
@@ -779,6 +915,84 @@ class DrawingCanvasView @JvmOverloads constructor(
         invalidate()
     }
 
+
+    // Global or shared set to track active formulas
+    val activeFormulas = mutableSetOf<String>()
+    private var popupWindow: PopupWindow? = null
+
+    fun showFormulaOverlay(formula: String) {
+        // Check if the formula is already displayed
+        if (activeFormulas.contains(formula)) {
+            Log.d("Debug", "Formula '$formula' is already displayed.")
+            return
+        }
+
+        // Add the formula to the active set
+        activeFormulas.add(formula)
+
+        // Inflate the layout for the LaTeX formula
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.latex_view, null)
+
+        layout.setBackgroundColor(Color.TRANSPARENT)
+
+        // Find the JLatexMathView and set the LaTeX formula
+        val latexMathView = layout.findViewById<ru.noties.jlatexmath.JLatexMathView>(R.id.j_latex_math_view)
+        latexMathView.setBackgroundColor(Color.TRANSPARENT)
+
+        if (latexMathView != null) {
+            try {
+                latexMathView.setLatex(formula)
+            } catch (e: Exception) {
+                Log.e("Debug", "Error setting LaTeX formula: ${e.message}")
+            }
+        }
+
+        // Create and show the PopupWindow
+        popupWindow = PopupWindow(layout, 500, 250, true)
+        popupWindow?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow?.isFocusable = false
+        popupWindow?.isOutsideTouchable = false
+
+        // Set touch listener for moving the PopupWindow
+        layout.setOnTouchListener(object : View.OnTouchListener {
+            private var offsetX = 0f
+            private var offsetY = 0f
+            var updatedX = 0
+            var updatedY = 0
+
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        offsetX = event.rawX - updatedX
+                        offsetY = event.rawY - updatedY
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        updatedX = (event.rawX - offsetX).toInt()
+                        updatedY = (event.rawY - offsetY).toInt()
+                        popupWindow?.update(updatedX, updatedY, -1, -1)
+                    }
+                }
+                return true
+            }
+        })
+
+        popupWindow?.showAtLocation(layout, Gravity.CENTER, 0, 0)
+    }
+
+    // Method to clean up popups
+    fun dismissPopups() {
+        popupWindow?.dismiss()
+        activeFormulas.clear()
+        Log.d("Debug", "Popups cleared and formulas removed.")
+    }
+}
+
+
+
+
+
+
 //    private fun showPenSizeChooserDialog() {
 //        val penDialog = Dialog(this)
 //        penDialog.setContentView(R.layout.dialog_pen_size)
@@ -823,4 +1037,4 @@ class DrawingCanvasView @JvmOverloads constructor(
 //
 //        }
 //    }
-}
+

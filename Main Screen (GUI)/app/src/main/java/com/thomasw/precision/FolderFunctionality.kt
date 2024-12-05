@@ -1,6 +1,6 @@
 package com.thomasw.precision
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -18,22 +18,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.rounded.Book
-import androidx.compose.material.icons.rounded.Style
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.IconButton
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 
 
 class FolderFunctionality {
@@ -41,12 +30,17 @@ class FolderFunctionality {
     fun FolderAppNavigation() {
         val navController = rememberNavController()
 
+
+
         NavHost(
             navController = navController,
             startDestination = "titleScreen"
         ) {
             composable("NotesPage") {
-                NotesPageWithDrawing()
+                NotesPageWithDrawing(navController = navController)
+                navController.addOnDestinationChangedListener { _, destination, _ ->
+                    Log.d("NavigationDebug", "Navigated to: ${destination.label}")
+                }
             }
             composable("titleScreen") {
                 // Initial screen showing root folders
