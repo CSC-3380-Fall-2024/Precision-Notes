@@ -19,23 +19,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thomasw.precision.ui.theme.PrecisionTheme
-
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Settings
-import androidx.navigation.compose.rememberNavController
 import com.thomasw.precision.ui.PensPopup
 import com.thomasw.precision.ui.NotebookPreferencesPopup
+import com.thomasw.precision.ui.ExportPopup
 
-//folder imports -- Konor
+// Folder imports
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import android.widget.Toast
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.ui.text.input.TextFieldValue
 import com.google.accompanist.flowlayout.FlowRow
-
-
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +44,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun TitleScreen(
     modifier: Modifier = Modifier,
@@ -61,26 +53,27 @@ fun TitleScreen(
     var expandedCreate by remember { mutableStateOf(false) }
     var expandedSettings by remember { mutableStateOf(false) }
 
-    // folders state
+    // State for popups
     var showDialog by remember { mutableStateOf(false) }
     var folderNameInput by remember { mutableStateOf(TextFieldValue()) }
-    var currentParentFolder by remember { mutableStateOf<Folder?>(parentFolder) }  // Use parentFolder
+    var currentParentFolder by remember { mutableStateOf<Folder?>(parentFolder) }
 
-    //pens popup
     var showPensPopup by remember { mutableStateOf(false) }
-
-    //notebook preferences popup
     var showNotebookPreferencesPopup by remember { mutableStateOf(false) }
+    var showExportPopup by remember { mutableStateOf(false) }
 
-    // Determine the folders to show based on the parentFolder
+    // Variables for notebook settings
+    var penSize by remember { mutableStateOf(5f) }
+    var penColor by remember { mutableStateOf(Color.Black) }
+    var notebookColor by remember { mutableStateOf(Color.White) }
+    var backgroundType by remember { mutableStateOf("Blank") }
+
+    // Determine the folders to show
     val folders = remember(currentParentFolder) {
         mutableStateListOf<Folder>().apply {
-            // If parentFolder is null, show root folders; otherwise, show subfolders of the current parent
             if (currentParentFolder == null) {
-                // If no parent folder, show root folders
                 addAll(FolderManager.getRootFolders())
             } else {
-                // Show subfolders of the current parent folder
                 addAll(currentParentFolder?.let { FolderManager.getSubfolders(it) } ?: emptyList())
             }
         }
@@ -94,7 +87,6 @@ fun TitleScreen(
             onFolderNameChange = { newText -> folderNameInput = newText },
             onFolderCreated = { folderName ->
                 FolderManager.createFolder(currentParentFolder, folderName)
-                // Update the folder list after creation
                 folders.clear()
                 if (currentParentFolder == null) {
                     folders.addAll(FolderManager.getRootFolders())
@@ -115,7 +107,7 @@ fun TitleScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Plus Button (Top Left) with Create Dropdown
+            // Plus Button
             IconButton(onClick = { expandedCreate = true }) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -127,23 +119,18 @@ fun TitleScreen(
                 expanded = expandedCreate,
                 onDismissRequest = { expandedCreate = false }
             ) {
-                // "Create New:" Header
                 Text(
                     text = "Create New:",
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-
-
-
-
                 DropdownMenuItem(
                     text = { Text("Notebook") },
                     onClick = {
                         expandedCreate = false
                         Log.d("TitleScreen", "Navigating to NotesPage")
-                        navController.navigate("NotesPage") // Navigate to the NotesPage route},
+                        navController.navigate("NotesPage")
                     },
                     leadingIcon = {
                         Icon(
@@ -164,7 +151,7 @@ fun TitleScreen(
                 )
                 DropdownMenuItem(
                     text = { Text("Folder") },
-                    onClick = { /* Handle Create Folder */
+                    onClick = {
                         expandedCreate = false
                         showDialog = true
                     },
@@ -177,103 +164,92 @@ fun TitleScreen(
                 )
             }
 
-            // Back Button (Top Left)
-            IconButton(onClick = {
-                // Simply pop the current screen from the navigation stack
-                navController.navigateUp()
-            }) {
+            // Export Button (Left of Settings)
+            IconButton(onClick = { showExportPopup = true }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back Button"
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "Export Button"
                 )
             }
 
-            // App Name in the Center (keeps it centered)
-            Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "Precision",
-                    fontSize = 20.sp,
-                    modifier = Modifier.align(Alignment.Center)
+            // Settings Button
+            IconButton(onClick = { expandedSettings = true }) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings Button"
                 )
             }
 
-            //Right-side buttons
-                    Row {
-                        IconButton(onClick = { /* Add Share functionality */ }) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = "Share Button"
-                            )
-                        }
-
-                        IconButton(onClick = { expandedSettings = true }) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Settings Button"
-                            )
-                        }
-
-                        DropdownMenu(
-                            expanded = expandedSettings,
-                            onDismissRequest = { expandedSettings = false }
-                        ) {
-                            DropdownMenuItem(
-                                text = { Text("Pens") },
-                                onClick = {
-                                    expandedSettings = false
-                                    showPensPopup = true
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Notebook Preferences") },
-                                onClick = {
-                                    expandedSettings = false
-                                    showNotebookPreferencesPopup = true
-                                }
-                            )
-                        }
+            DropdownMenu(
+                expanded = expandedSettings,
+                onDismissRequest = { expandedSettings = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Pens") },
+                    onClick = {
+                        expandedSettings = false
+                        showPensPopup = true
                     }
+                )
+                DropdownMenuItem(
+                    text = { Text("Notebook Preferences") },
+                    onClick = {
+                        expandedSettings = false
+                        showNotebookPreferencesPopup = true
+                    }
+                )
+            }
         }
 
+        // Pens Popup
         PensPopup(
             showPopup = showPensPopup,
             onDismiss = { showPensPopup = false },
-            onSizeChange = { /* Handle size change */ },
-            onColorChange = { /* Handle color change */ }
+            onSizeChange = { newSize -> penSize = newSize },
+            onColorChange = { newColor -> penColor = newColor }
         )
 
+        // Notebook Preferences Popup
         NotebookPreferencesPopup(
             showPopup = showNotebookPreferencesPopup,
             onDismiss = { showNotebookPreferencesPopup = false },
-            onColorChange = { /* Handle color change */ },
-            onBackgroundTypeChange = { /* Handle background type change */ },
+            onColorChange = { newColor -> notebookColor = newColor },
+            onBackgroundTypeChange = { newType -> backgroundType = newType },
             onImageImport = { /* Handle image import */ }
         )
 
+        // Export Popup
+        ExportPopup(
+            showPopup = showExportPopup,
+            onDismiss = { showExportPopup = false },
+            onExportNotebook = { notebookName ->
+                // Implement export logic here
+                Log.d("ExportPopup", "Exporting notebook: $notebookName")
+            }
+        )
 
-        // Inside the TitleScreen function, replace the Row for displaying folders:
+        // Display folders
         FlowRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp,top = 96.dp),
-            mainAxisSpacing = 16.dp, // Spacing between items horizontally
-            crossAxisSpacing = 16.dp // Spacing between items vertically
+                .padding(start = 16.dp, top = 96.dp),
+            mainAxisSpacing = 16.dp,
+            crossAxisSpacing = 16.dp
         ) {
             folders.forEach { folder ->
                 Button(
                     onClick = {
-                        // When a folder is clicked, navigate to a new TitleScreen with the clicked folder as the parent
                         navController.navigate("titleScreen/${folder.name}")
                     },
-                    modifier = Modifier.padding(4.dp) // Adjust padding for individual buttons
+                    modifier = Modifier.padding(4.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = Icons.Default.Folder, // Use a folder icon
+                            imageVector = Icons.Default.Folder,
                             contentDescription = "Folder Icon",
-                            modifier = Modifier.size(20.dp) // Adjust size as needed
+                            modifier = Modifier.size(20.dp)
                         )
-                        Spacer(modifier = Modifier.width(8.dp)) // Add space between icon and text
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(text = folder.name)
                     }
                 }
@@ -282,18 +258,11 @@ fun TitleScreen(
     }
 }
 
-
-
-
-
 @Preview(showBackground = true)
 @Composable
 fun TitleScreenPreview() {
     PrecisionTheme {
-        // Mock data for preview
-        val mockParentFolder: Folder? = null // or provide a mock Folder instance
-
-        // Preview of TitleScreen with mock data
+        val mockParentFolder: Folder? = null
         TitleScreen(
             parentFolder = mockParentFolder,
             modifier = Modifier.fillMaxSize(),
