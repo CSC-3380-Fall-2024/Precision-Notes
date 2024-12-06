@@ -1,5 +1,6 @@
 package com.thomasw.precision
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 
 data class Folder(
@@ -10,10 +11,12 @@ data class Folder(
 
 object FolderManager {
     private val rootFolders = mutableListOf<Folder>()
-
+    private var folderNum = 0
     // Create a new folder
     // Modify the FolderManager's createFolder function
-    fun createFolder(parentFolder: Folder?, folderName: String, folderNum: Int) {
+    fun createFolder(parentFolder: Folder?, folderName: String) {
+        folderNum += 1;
+        Log.d("TitleScreen", "Folder Created: $folderName, FolderNum: $folderNum")
         val newFolder = Folder(folderName, folderNum)
         if (parentFolder == null) {
             // If no parent folder, it's a top-level folder
