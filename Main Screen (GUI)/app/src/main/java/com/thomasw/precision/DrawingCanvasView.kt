@@ -1,14 +1,12 @@
 package com.thomasw.precision
 
 
-import android.app.Dialog
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -26,9 +24,7 @@ import androidx.compose.material.icons.Icons
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.material.*
 import androidx.compose.material3.Text
-import androidx.compose.material3.Typography.*
 import androidx.compose.material3.Icon
 
 
@@ -41,26 +37,18 @@ import androidx.compose.ui.Alignment
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.Window
 import android.widget.FrameLayout
 import android.widget.PopupWindow
-import android.widget.RelativeLayout
-import androidx.compose.material.icons.rounded.Book
-import androidx.compose.material.icons.rounded.Folder
-import androidx.compose.material.icons.rounded.Style
 import androidx.compose.ui.unit.sp
-
-import ru.noties.jlatexmath.JLatexMathView
 
 import androidx.compose.foundation.layout.padding
 
 import androidx.compose.runtime.Composable
 
-import android.widget.TextView
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.NavController
+import com.thomasw.precision.ui.PensPopup
 
 
 @Composable
@@ -865,8 +853,8 @@ class DrawingCanvasView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
-    private var currentColor = androidx.compose.ui.graphics.Color.Black
-    private var currentSize = 8f
+    var currentColor = androidx.compose.ui.graphics.Color.Black
+    var currentSize = 8f
 
     private val pathPaint = Paint().apply {
         isAntiAlias = true
@@ -921,27 +909,27 @@ class DrawingCanvasView @JvmOverloads constructor(
         }
         return super.onKeyUp(keyCode, event)
     }
-    private val pathPaint = Paint().apply {
-        color = Color.BLACK
-        isAntiAlias = true
-        strokeWidth = 8f
-        style = Paint.Style.STROKE
-        strokeJoin = Paint.Join.ROUND
-        strokeCap = Paint.Cap.ROUND
-    }
+//    private val pathPaint = Paint().apply {
+//        color = Color.BLACK
+//        isAntiAlias = true
+//        strokeWidth = 8f
+//        style = Paint.Style.STROKE
+//        strokeJoin = Paint.Join.ROUND
+//        strokeCap = Paint.Cap.ROUND
+//    }
 
-    private val textPaint = Paint().apply {
-        color = Color.BLUE
-        textSize = 50f
-        isAntiAlias = true
-    }
+//    private val textPaint = Paint().apply {
+//        color = Color.BLUE
+//        textSize = 50f
+//        isAntiAlias = true
+//    }
 
-    private val path = Path()
-    private val texts = mutableListOf<Pair<String, Pair<Float, Float>>>()
+    //private val path = Path()
+    //private val texts = mutableListOf<Pair<String, Pair<Float, Float>>>()
 
-    private var typingEnabled = false
-    private var currentText = StringBuilder()
-    private var cursorPosition: Pair<Float, Float>? = null
+    //private var typingEnabled = false
+    //private var currentText = StringBuilder()
+    //private var cursorPosition: Pair<Float, Float>? = null
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -998,8 +986,8 @@ class DrawingCanvasView @JvmOverloads constructor(
         }
     }
 
-    fun updatePenSettings(color: androidx.compose.ui.graphics.Color, size: Float) {
-        currentColor = color
+    fun updatePenSettings(color: Any, size: Float) {
+        currentColor = color as androidx.compose.ui.graphics.Color
         currentSize = size
     }
 
@@ -1044,15 +1032,11 @@ class DrawingCanvasView @JvmOverloads constructor(
 
 
     // Global or shared set to track active formulas
+    // Global or shared set to track active formulas
     val activeFormulas = mutableSetOf<String>()
     val activePopups = mutableListOf<PopupWindow>() // To track active PopupWindows
 
     fun showFormulaOverlay(formula: String) {
-        // Check if the formula is already displayed
-        if (activeFormulas.contains(formula)) {
-            Log.d("Debug", "Formula '$formula' is already displayed.")
-            return
-        }
 
         // Add the formula to the active set
         activeFormulas.add(formula)
@@ -1074,10 +1058,13 @@ class DrawingCanvasView @JvmOverloads constructor(
         }
 
         // Create and show the PopupWindow
-        popupWindow = PopupWindow(layout, 500, 250, true)
-        popupWindow?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupWindow?.isFocusable = false
-        popupWindow?.isOutsideTouchable = false
+        val popupWindow = PopupWindow(layout, 500, 250, true)
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.isFocusable = false
+        popupWindow.isOutsideTouchable = false
+
+        // Track this PopupWindow
+        activePopups.add(popupWindow)
 
         // Set touch listener for moving the PopupWindow
         layout.setOnTouchListener(object : View.OnTouchListener {
@@ -1095,21 +1082,23 @@ class DrawingCanvasView @JvmOverloads constructor(
                     MotionEvent.ACTION_MOVE -> {
                         updatedX = (event.rawX - offsetX).toInt()
                         updatedY = (event.rawY - offsetY).toInt()
-                        popupWindow?.update(updatedX, updatedY, -1, -1)
+                        popupWindow.update(updatedX, updatedY, -1, -1)
                     }
                 }
                 return true
             }
         })
 
-        popupWindow?.showAtLocation(layout, Gravity.CENTER, 0, 0)
+        popupWindow.showAtLocation(layout, Gravity.CENTER, 0, 0)
     }
 
-    // Method to clean up popups
-    fun dismissPopups() {
-        popupWindow?.dismiss()
+    // Dismiss all active PopupWindows
+    fun dismissActivePopups() {
+        for (popup in activePopups) {
+            popup.dismiss()
+        }
+        activePopups.clear()
         activeFormulas.clear()
-        Log.d("Debug", "Popups cleared and formulas removed.")
     }
 }
 
