@@ -77,6 +77,7 @@ fun TitleScreen(
     var showDialog by remember { mutableStateOf(false) }
     var folderNameInput by remember { mutableStateOf(TextFieldValue()) }
     var currentParentFolder by remember { mutableStateOf<Folder?>(parentFolder) }  // Use parentFolder
+    var folderNum by remember { mutableIntStateOf(0) }
 
     //pens popup
     var showPensPopup by remember { mutableStateOf(false) }
@@ -105,7 +106,8 @@ fun TitleScreen(
             folderNameInput = folderNameInput,
             onFolderNameChange = { newText -> folderNameInput = newText },
             onFolderCreated = { folderName ->
-                FolderManager.createFolder(currentParentFolder, folderName)
+                folderNum = folderNum + 1;
+                FolderManager.createFolder(currentParentFolder, folderName, folderNum)
                 // Update the folder list after creation
                 folders.clear()
                 if (currentParentFolder == null) {
@@ -273,7 +275,7 @@ fun TitleScreen(
                 Button(
                     onClick = {
                         // When a folder is clicked, navigate to a new TitleScreen with the clicked folder as the parent
-                        navController.navigate("titleScreen/${folder.name}")
+                        navController.navigate("titleScreen/${folder.folderID}")
                     },
                     modifier = Modifier.padding(4.dp) // Adjust padding for individual buttons
                 ) {

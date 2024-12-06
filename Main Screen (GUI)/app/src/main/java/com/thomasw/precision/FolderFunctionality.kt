@@ -30,8 +30,6 @@ class FolderFunctionality {
     fun FolderAppNavigation() {
         val navController = rememberNavController()
 
-
-
         NavHost(
             navController = navController,
             startDestination = "titleScreen"
@@ -53,11 +51,11 @@ class FolderFunctionality {
             }
 
             // This route handles opening TitleScreen for a specific folder's subfolders
-            composable("titleScreen/{folderName}") { backStackEntry ->
-                val folderName = backStackEntry.arguments?.getString("folderName")
+            composable("titleScreen/{folderID}") { backStackEntry ->
+                val folderName = backStackEntry.arguments?.getString("folderID")?.toIntOrNull()
 
                 // Ensure folderName is not null before calling getFolderByName
-                val parentFolder = folderName?.let { FolderManager.getFolderByName(it) }
+                val parentFolder = folderName?.let { FolderManager.getFolderByID(it) }
 
                 if (parentFolder != null) {
                     TitleScreen(

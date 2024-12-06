@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 
 data class Folder(
     val name: String,
+    val folderID: Int,
     val subfolders: MutableList<Folder> = mutableListOf()
 )
 
@@ -12,8 +13,8 @@ object FolderManager {
 
     // Create a new folder
     // Modify the FolderManager's createFolder function
-    fun createFolder(parentFolder: Folder?, folderName: String) {
-        val newFolder = Folder(folderName)
+    fun createFolder(parentFolder: Folder?, folderName: String, folderNum: Int) {
+        val newFolder = Folder(folderName, folderNum)
         if (parentFolder == null) {
             // If no parent folder, it's a top-level folder
             rootFolders.add(newFolder)
@@ -29,14 +30,14 @@ object FolderManager {
     // Get subfolders of a given folder
     fun getSubfolders(folder: Folder): List<Folder> = folder.subfolders
 
-    fun getFolderByName(name: String): Folder? {
-        return findFolderRecursively(rootFolders, name)
+    fun getFolderByID(folderID: Int): Folder? {
+        return findFolderRecursively(rootFolders, folderID)
     }
 
-    private fun findFolderRecursively(folders: List<Folder>, name: String): Folder? {
+    private fun findFolderRecursively(folders: List<Folder>, folderID: Int): Folder? {
         for (folder in folders) {
-            if (folder.name == name) return folder
-            val result = findFolderRecursively(folder.subfolders, name)
+            if (folder.folderID == folderID) return folder
+            val result = findFolderRecursively(folder.subfolders, folderID)
             if (result != null) return result
         }
         return null
