@@ -81,7 +81,7 @@ fun NotesPageWithDrawing(
     var expandedStandardEquations by remember { mutableStateOf(false) }
     var formula by remember { mutableStateOf("") }
     val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
-
+    var showNotebookPreferences by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -92,14 +92,12 @@ fun NotesPageWithDrawing(
                 DrawingCanvasView(context).apply {
                     setBackgroundColor(Color.WHITE)
                     this.isFocusable = true
-                    this.isFocusableInTouchMode = true// Optional: Explicitly set the background
+                    this.isFocusableInTouchMode = true // Optional: Explicitly set the background
                     drawingCanvasView.value = this // Store reference
                 }
                 //LayoutInflater.from(context).inflate(R.layout.`latex_view.txt`, null)
-
             },
             modifier = Modifier.fillMaxSize()
-
         )
 
         // Top Bar
@@ -130,7 +128,8 @@ fun NotesPageWithDrawing(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-            //Right-side buttons
+
+            // Right-side buttons
             Row {
                 androidx.compose.material3.IconButton(onClick = { /* Add Share functionality */ }) {
                     Icon(
@@ -160,6 +159,7 @@ fun NotesPageWithDrawing(
                         text = { Text("Notebook Preferences") },
                         onClick = {
                             expandedSettings = false
+                            showNotebookPreferences = true // Show notebook preferences popup
                         }
                     )
                     DropdownMenuItem(
@@ -169,6 +169,23 @@ fun NotesPageWithDrawing(
                         }
                     )
                 }
+            }
+        }
+
+        // Notebook Preferences Popup
+        NotebookPreferencesPopup(
+            showPopup = showNotebookPreferences,
+            onDismiss = { showNotebookPreferences = false },
+            onBackgroundColorChange = { isBlack ->
+                drawingCanvasView.value?.setBackgroundColorPreference(isBlack)
+            },
+            onLinedChange = { isLined ->
+                drawingCanvasView.value?.setBackgroundLinedPreference(isLined)
+            }
+        )
+    }
+}
+
 
 
                 androidx.compose.material3.DropdownMenu(
@@ -758,8 +775,6 @@ fun NotesPageWithDrawing(
     }
 }
 
-
-
 class DrawingCanvasView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
@@ -769,7 +784,6 @@ class DrawingCanvasView @JvmOverloads constructor(
         //val context = LocalContext.current // Get the Context
         showFormulaOverlay(formula)
     }
-
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (typingEnabled) {
@@ -800,6 +814,7 @@ class DrawingCanvasView @JvmOverloads constructor(
         }
         return super.onKeyUp(keyCode, event)
     }
+
     private val pathPaint = Paint().apply {
         color = Color.BLACK
         isAntiAlias = true
@@ -817,11 +832,9 @@ class DrawingCanvasView @JvmOverloads constructor(
 
     private val path = Path()
     private val texts = mutableListOf<Pair<String, Pair<Float, Float>>>()
-
     private var typingEnabled = false
     private var currentText = StringBuilder()
     private var cursorPosition: Pair<Float, Float>? = null
-
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
@@ -915,6 +928,30 @@ class DrawingCanvasView @JvmOverloads constructor(
         invalidate()
     }
 
+    // New methods for background preferences
+    fun setBackgroundColorPreference(isBlack: Boolean) {
+        setBackgroundColor(if (isBlack) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
+        invalidate() // Redraw the canvas with the updated background color
+    }
+
+    fun setBackgroundLinedPreference(isLined: Boolean) {
+        // Logic to draw lines if "lined" is true
+        if (isLined) {
+            val lineSpacing = 100 // Example spacing between lines
+            val linePaint = Paint().apply {
+                color = android.graphics.Color.GRAY
+                strokeWidth = 2f
+            }
+
+            val canvas = Canvas()
+            for (y in 0..height step lineSpacing) {
+                canvas.drawLine(0f, y.toFloat(), width.toFloat(), y.toFloat(), linePaint)
+            }
+        } else {
+            path.reset() // Reset the canvas if "lined" is disabled
+        }
+        invalidate() // Trigger a redraw
+    }
 
     // Global or shared set to track active formulas
     val activeFormulas = mutableSetOf<String>()
@@ -987,11 +1024,6 @@ class DrawingCanvasView @JvmOverloads constructor(
         Log.d("Debug", "Popups cleared and formulas removed.")
     }
 }
-
-
-
-
-
 
 //    private fun showPenSizeChooserDialog() {
 //        val penDialog = Dialog(this)
