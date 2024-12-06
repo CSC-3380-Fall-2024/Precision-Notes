@@ -82,9 +82,6 @@ fun NotesPageWithDrawing(
     var formula by remember { mutableStateOf("") }
     val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
 
-    // Add state for ExportPopup
-    var showExportPopup by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -95,29 +92,14 @@ fun NotesPageWithDrawing(
                 DrawingCanvasView(context).apply {
                     setBackgroundColor(Color.WHITE)
                     this.isFocusable = true
-                    this.isFocusableInTouchMode = true // Optional: Explicitly set the background
+                    this.isFocusableInTouchMode = true// Optional: Explicitly set the background
                     drawingCanvasView.value = this // Store reference
                 }
+                //LayoutInflater.from(context).inflate(R.layout.`latex_view.txt`, null)
+
             },
             modifier = Modifier.fillMaxSize()
-        )
 
-        // Export Popup
-        ExportPopup(
-            showPopup = showExportPopup,
-            onDismiss = { showExportPopup = false },
-            onExport = {
-                val filePath = drawingCanvasView.value?.exportAsPdf(context, "Notebook_${System.currentTimeMillis()}")
-                if (filePath != null) {
-                    Toast.makeText(context, "PDF saved to $filePath", Toast.LENGTH_SHORT).show()
-                }
-            },
-            onCopyLink = { filePath ->
-                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                val clip = android.content.ClipData.newPlainText("PDF Link", filePath)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
-            }
         )
 
         // Top Bar
@@ -148,12 +130,12 @@ fun NotesPageWithDrawing(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-            // Right-side buttons
+            //Right-side buttons
             Row {
-                androidx.compose.material3.IconButton(onClick = { showExportPopup = true }) {
+                androidx.compose.material3.IconButton(onClick = { /* Add Share functionality */ }) {
                     Icon(
                         imageVector = Icons.Default.Share,
-                        contentDescription = "Export"
+                        contentDescription = "Share Button"
                     )
                 }
 
@@ -788,6 +770,7 @@ class DrawingCanvasView @JvmOverloads constructor(
         showFormulaOverlay(formula)
     }
 
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (typingEnabled) {
             when (keyCode) {
@@ -817,7 +800,6 @@ class DrawingCanvasView @JvmOverloads constructor(
         }
         return super.onKeyUp(keyCode, event)
     }
-
     private val pathPaint = Paint().apply {
         color = Color.BLACK
         isAntiAlias = true
@@ -839,6 +821,7 @@ class DrawingCanvasView @JvmOverloads constructor(
     private var typingEnabled = false
     private var currentText = StringBuilder()
     private var cursorPosition: Pair<Float, Float>? = null
+
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
@@ -863,7 +846,7 @@ class DrawingCanvasView @JvmOverloads constructor(
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                if (toolType == MotionEvent.TOOL_TYPE_FINGER || MotionEvent.TOOL_TYPE_STYLUS) {
+                if (toolType == MotionEvent.TOOL_TYPE_FINGER || toolType == MotionEvent.TOOL_TYPE_STYLUS) {
                     path.lineTo(x, y)
                 }
             }
@@ -931,6 +914,7 @@ class DrawingCanvasView @JvmOverloads constructor(
         cursorPosition = null
         invalidate()
     }
+
 
     // Global or shared set to track active formulas
     val activeFormulas = mutableSetOf<String>()
@@ -1001,32 +985,6 @@ class DrawingCanvasView @JvmOverloads constructor(
         popupWindow?.dismiss()
         activeFormulas.clear()
         Log.d("Debug", "Popups cleared and formulas removed.")
-    }
-
-    // New method to export as PDF
-    fun exportAsPdf(context: Context, fileName: String): String? {
-        val pdfDocument = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
-        val page = pdfDocument.startPage(pageInfo)
-
-        // Draw the canvas content onto the PDF page
-        this.draw(page.canvas)
-        pdfDocument.finishPage(page)
-
-        // Save the PDF to a file
-        val directory = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "PrecisionNotes")
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
-        val file = File(directory, "$fileName.pdf")
-        return try {
-            pdfDocument.writeTo(FileOutputStream(file))
-            pdfDocument.close()
-            file.absolutePath
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
     }
 }
 

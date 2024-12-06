@@ -64,6 +64,7 @@ dependencies {
     implementation ("androidx.compose.material3:material3:1.3.1") // Material3
     implementation ("androidx.activity:activity-compose:1.6.1") // Activity Compose
 
+
     val nav_version = "2.8.3"
     val jlatexmath_version = "0.2.0"
 
@@ -80,7 +81,7 @@ dependencies {
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:$nav_version")
 
-    // Be sure to add the following implementations or you WILL get an ERROR!!!!
+    // Be sure to add the following implenentations or you WILL get an ERROR!!!!
     implementation("androidx.compose.ui:ui:1.5.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
     implementation("androidx.compose.foundation:foundation:1.5.0")
@@ -99,6 +100,10 @@ dependencies {
 
     implementation ("androidx.appcompat:appcompat:1.6.1")
 
-    // PDF generation dependency
-    implementation("androidx.print:print:1.1.0")
+
+
+
+
+
+
 }
