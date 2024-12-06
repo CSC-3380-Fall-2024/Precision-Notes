@@ -54,15 +54,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Composable to represent the layout for the DrawingCanvasView
-//@Composable
-//fun DrawingCanvasViewLayout(listener: OnContentViewChangeListener?) {
-//    // Your layout for DrawingCanvasView
-//
-//    // Trigger the listener when some action happens
-//    listener?.onChangeContentView() // Example trigger for layout change
-//}
-
 
 @Composable
 fun TitleScreen(
@@ -77,7 +68,7 @@ fun TitleScreen(
     var showDialog by remember { mutableStateOf(false) }
     var folderNameInput by remember { mutableStateOf(TextFieldValue()) }
     var currentParentFolder by remember { mutableStateOf<Folder?>(parentFolder) }  // Use parentFolder
-    var folderNum by remember { mutableIntStateOf(0) }
+    //var folderNum by remember { mutableIntStateOf(0) }
 
     //pens popup
     var showPensPopup by remember { mutableStateOf(false) }
@@ -106,8 +97,9 @@ fun TitleScreen(
             folderNameInput = folderNameInput,
             onFolderNameChange = { newText -> folderNameInput = newText },
             onFolderCreated = { folderName ->
-                folderNum = folderNum + 1;
-                FolderManager.createFolder(currentParentFolder, folderName, folderNum)
+                //folderNum += 1;
+                Log.d("TitleScreen", "Folder Created: $folderName")
+                FolderManager.createFolder(currentParentFolder, folderName)
                 // Update the folder list after creation
                 folders.clear()
                 if (currentParentFolder == null) {
@@ -293,15 +285,6 @@ fun TitleScreen(
         }
     }
 }
-
-@Composable
-fun NotesPage() {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("This is the Notes Page!")
-        // Add more content/layout for the Notes page here
-    }
-}
-
 
 
 @Preview(showBackground = true)

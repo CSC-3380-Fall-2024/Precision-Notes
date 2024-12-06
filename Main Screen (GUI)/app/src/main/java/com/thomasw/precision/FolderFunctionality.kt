@@ -119,30 +119,4 @@ class FolderFunctionality {
         )
     }
 
-    @Composable
-    fun DisplayFolders(folders: List<Folder>, onFolderClick: (Folder) -> Unit) {
-        Row(modifier = Modifier.padding(16.dp)) {
-            folders.forEach { folder ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(horizontal = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Button(
-                        onClick = { onFolderClick(folder) },
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Folder,
-                            contentDescription = "Folder Icon",
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(folder.name, fontSize = 16.sp)
-                    }
-                }
-            }
-        }
-    }
 }
