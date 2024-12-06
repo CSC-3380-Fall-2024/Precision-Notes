@@ -1,10 +1,11 @@
 // PensPopup.kt
 package com.thomasw.precision.ui
 
-import androidx.compose.foundation.layout.* // For Column, Row, Spacer, etc.
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier // Import Modifier here
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -23,20 +24,26 @@ fun PensPopup(
                 Column {
                     // Size Slider
                     Text("Size:")
+                    val sizeRange = remember { 1f..20f } // Pen size range
                     Slider(
-                        value = 5f,  // Default size
+                        value = 5f, // Default size
                         onValueChange = onSizeChange,
-                        valueRange = 1f..10f
+                        valueRange = sizeRange
                     )
 
                     // Color Selection Buttons
                     Text("Color:")
-                    Row {
-                        Button(onClick = { onColorChange(Color.Black) }) { Text("Black") }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Button(onClick = { onColorChange(Color.Red) }) { Text("Red") }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Button(onClick = { onColorChange(Color.Blue) }) { Text("yellow") }
+                    Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+                        listOf(
+                            Color.Red, Color(0xFFFFA500), Color.Yellow, Color.Green,
+                            Color.Blue, Color(0xFF4B0082), Color(0xFF8A2BE2), Color.Black, Color.White
+                        ).forEach { color ->
+                            Button(
+                                onClick = { onColorChange(color) },
+                                colors = ButtonDefaults.buttonColors(containerColor = color),
+                                modifier = Modifier.size(40.dp)
+                            ) { }
+                        }
                     }
                 }
             },
