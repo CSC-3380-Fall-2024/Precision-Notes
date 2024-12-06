@@ -69,6 +69,7 @@ fun NotesPageWithDrawing(
     println("Navigating to NotesPageWithDrawing DRAWING CANVAS")
 
     var expandedSettings by remember { mutableStateOf(false) }
+    var showPensPopup by remember { mutableStateOf(false) }
     var expandedFormula by remember { mutableStateOf(false) }
     var expandedArea by remember { mutableStateOf(false) }
     var expandedVolume by remember { mutableStateOf(false) }
@@ -154,6 +155,7 @@ fun NotesPageWithDrawing(
                         text = { Text("Pens") },
                         onClick = {
                             expandedSettings = false
+                            showPensPopup = true
                         }
                     )
                     DropdownMenuItem(
@@ -169,6 +171,24 @@ fun NotesPageWithDrawing(
                         }
                     )
                 }
+
+                PensPopup(
+                    showPopup = showPensPopup,
+                    onDismiss = { showPensPopup = false },
+                    onSizeChange = { size ->
+                        drawingCanvasView.value?.updatePenSettings(
+                            color = drawingCanvasView.value?.currentColor ?: Color.BLACK,
+                            size = size
+                        )
+                    },
+                    onColorChange = { color ->
+                        drawingCanvasView.value?.updatePenSettings(
+                            color = color,
+                            size = drawingCanvasView.value?.currentSize ?: 8f
+                        )
+                    }
+                )
+
 
 
                 androidx.compose.material3.DropdownMenu(
@@ -764,46 +784,11 @@ class DrawingCanvasView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : FrameLayout(context, attrs) {
 
-    @Composable
-    fun ShowFormulaInOverlay(formula: String) {
-        //val context = LocalContext.current // Get the Context
-        showFormulaOverlay(formula)
-    }
+    private var currentColor = androidx.compose.ui.graphics.Color.Black
+    private var currentSize = 8f
 
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (typingEnabled) {
-            when (keyCode) {
-                KeyEvent.KEYCODE_DEL -> {
-                    // Handle backspace
-                    if (currentText.isNotEmpty()) {
-                        currentText.deleteCharAt(currentText.length - 1)
-                    }
-                }
-                else -> {
-                    val char = event?.unicodeChar?.toChar()
-                    if (char != null && char.isLetterOrDigit()) {
-                        currentText.append(char)
-                    }
-                }
-            }
-            invalidate()
-            return true // Indicate the event was handled
-        }
-        return super.onKeyDown(keyCode, event)
-    }
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (typingEnabled && keyCode == KeyEvent.KEYCODE_ENTER) {
-            finishTyping() // Finalize the current text entry
-            return true // Indicate the event was handled
-        }
-        return super.onKeyUp(keyCode, event)
-    }
     private val pathPaint = Paint().apply {
-        color = Color.BLACK
         isAntiAlias = true
-        strokeWidth = 8f
         style = Paint.Style.STROKE
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND
@@ -822,6 +807,39 @@ class DrawingCanvasView @JvmOverloads constructor(
     private var currentText = StringBuilder()
     private var cursorPosition: Pair<Float, Float>? = null
 
+    @Composable
+    fun ShowFormulaInOverlay(formula: String) {
+        showFormulaOverlay(formula)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (typingEnabled) {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DEL -> {
+                    if (currentText.isNotEmpty()) {
+                        currentText.deleteCharAt(currentText.length - 1)
+                    }
+                }
+                else -> {
+                    val char = event?.unicodeChar?.toChar()
+                    if (char != null && char.isLetterOrDigit()) {
+                        currentText.append(char)
+                    }
+                }
+            }
+            invalidate()
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (typingEnabled && keyCode == KeyEvent.KEYCODE_ENTER) {
+            finishTyping()
+            return true
+        }
+        return super.onKeyUp(keyCode, event)
+    }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
@@ -832,13 +850,11 @@ class DrawingCanvasView @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> {
                 when (toolType) {
                     MotionEvent.TOOL_TYPE_MOUSE -> {
-                        // Enable text input on mouse click
                         cursorPosition = Pair(x, y)
                         typingEnabled = true
                         invalidate()
                     }
                     MotionEvent.TOOL_TYPE_FINGER, MotionEvent.TOOL_TYPE_STYLUS -> {
-                        // Enable drawing
                         typingEnabled = false
                         path.moveTo(x, y)
                         return true
@@ -850,9 +866,6 @@ class DrawingCanvasView @JvmOverloads constructor(
                     path.lineTo(x, y)
                 }
             }
-            MotionEvent.ACTION_UP -> {
-                // Optional: Do something when touch is lifted
-            }
         }
         invalidate()
         return true
@@ -860,15 +873,14 @@ class DrawingCanvasView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        // Draw the drawing paths
+        pathPaint.color = currentColor.toArgb()
+        pathPaint.strokeWidth = currentSize
         canvas.drawPath(path, pathPaint)
 
-        // Draw the existing text
         texts.forEach { (text, position) ->
             canvas.drawText(text, position.first, position.second, textPaint)
         }
 
-        // Draw the current typing text
         cursorPosition?.let { position ->
             if (typingEnabled && currentText.isNotEmpty()) {
                 canvas.drawText(currentText.toString(), position.first, position.second, textPaint)
@@ -876,11 +888,15 @@ class DrawingCanvasView @JvmOverloads constructor(
         }
     }
 
+    fun updatePenSettings(color: androidx.compose.ui.graphics.Color, size: Float) {
+        currentColor = color
+        currentSize = size
+    }
+
     fun addTypedText(keyCode: Int) {
         if (typingEnabled) {
             when (keyCode) {
                 android.view.KeyEvent.KEYCODE_DEL -> {
-                    // Handle backspace
                     if (currentText.isNotEmpty()) {
                         currentText.deleteCharAt(currentText.length - 1)
                     }
@@ -915,28 +931,21 @@ class DrawingCanvasView @JvmOverloads constructor(
         invalidate()
     }
 
-
     // Global or shared set to track active formulas
     val activeFormulas = mutableSetOf<String>()
     private var popupWindow: PopupWindow? = null
 
     fun showFormulaOverlay(formula: String) {
-        // Check if the formula is already displayed
         if (activeFormulas.contains(formula)) {
             Log.d("Debug", "Formula '$formula' is already displayed.")
             return
         }
 
-        // Add the formula to the active set
         activeFormulas.add(formula)
-
-        // Inflate the layout for the LaTeX formula
         val inflater = LayoutInflater.from(context)
         val layout = inflater.inflate(R.layout.latex_view, null)
-
         layout.setBackgroundColor(Color.TRANSPARENT)
 
-        // Find the JLatexMathView and set the LaTeX formula
         val latexMathView = layout.findViewById<ru.noties.jlatexmath.JLatexMathView>(R.id.j_latex_math_view)
         latexMathView.setBackgroundColor(Color.TRANSPARENT)
 
@@ -948,13 +957,11 @@ class DrawingCanvasView @JvmOverloads constructor(
             }
         }
 
-        // Create and show the PopupWindow
         popupWindow = PopupWindow(layout, 500, 250, true)
         popupWindow?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupWindow?.isFocusable = false
         popupWindow?.isOutsideTouchable = false
 
-        // Set touch listener for moving the PopupWindow
         layout.setOnTouchListener(object : View.OnTouchListener {
             private var offsetX = 0f
             private var offsetY = 0f
@@ -980,13 +987,13 @@ class DrawingCanvasView @JvmOverloads constructor(
         popupWindow?.showAtLocation(layout, Gravity.CENTER, 0, 0)
     }
 
-    // Method to clean up popups
     fun dismissPopups() {
         popupWindow?.dismiss()
         activeFormulas.clear()
         Log.d("Debug", "Popups cleared and formulas removed.")
     }
 }
+
 
 
 
