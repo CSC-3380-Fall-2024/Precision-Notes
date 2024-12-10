@@ -48,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.graphics.toArgb
 import androidx.navigation.NavController
+import com.thomasw.precision.ui.NotebookPreferencesPopup
 import com.thomasw.precision.ui.PensPopup
 
 
@@ -72,6 +73,7 @@ fun NotesPageWithDrawing(
     var formula by remember { mutableStateOf("") }
     val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
     var printFormulas by remember { mutableStateOf(false) }
+    var showNotebookPreferences by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -151,6 +153,7 @@ fun NotesPageWithDrawing(
                         text = { Text("Notebook Preferences") },
                         onClick = {
                             expandedSettings = false
+                            showNotebookPreferences = true
                         }
                     )
                     DropdownMenuItem(
@@ -160,6 +163,19 @@ fun NotesPageWithDrawing(
                         }
                     )
                 }
+
+
+                // Notebook Preferences Popup
+                NotebookPreferencesPopup(
+                    showPopup = showNotebookPreferences,
+                    onDismiss = { showNotebookPreferences = false },
+                    onBackgroundColorChange = { isBlack ->
+                        drawingCanvasView.value?.setBackgroundColorPreference(isBlack)
+                    },
+                    onLinedChange = { isLined ->
+                        drawingCanvasView.value?.setBackgroundLinedPreference(isLined)
+                    }
+                )
 
                 PensPopup(
                     showPopup = showPensPopup,
@@ -1028,6 +1044,32 @@ class DrawingCanvasView @JvmOverloads constructor(
         typingEnabled = false
         cursorPosition = null
         invalidate()
+    }
+
+
+    // New methods for background preferences
+    fun setBackgroundColorPreference(isBlack: Boolean) {
+        setBackgroundColor(if (isBlack) Color.BLACK else Color.WHITE)
+        invalidate() // Redraw the canvas with the updated background color
+    }
+
+    fun setBackgroundLinedPreference(isLined: Boolean) {
+        // Logic to draw lines if "lined" is true
+        if (isLined) {
+            val lineSpacing = 100 // Example spacing between lines
+            val linePaint = Paint().apply {
+                color = android.graphics.Color.GRAY
+                strokeWidth = 2f
+            }
+
+            val canvas = Canvas()
+            for (y in 0..height step lineSpacing) {
+                canvas.drawLine(0f, y.toFloat(), width.toFloat(), y.toFloat(), linePaint)
+            }
+        } else {
+            path.reset() // Reset the canvas if "lined" is disabled
+        }
+        invalidate() // Trigger a redraw
     }
 
 
