@@ -35,6 +35,8 @@ import com.google.accompanist.flowlayout.FlowRow
 import ru.noties.jlatexmath.JLatexMathView
 
 
+
+
 // Define the interface outside of the onCreate method
 //interface OnContentViewChangeListener {
 //    fun onChangeContentView()
@@ -249,9 +251,8 @@ fun TitleScreen(
         NotebookPreferencesPopup(
             showPopup = showNotebookPreferencesPopup,
             onDismiss = { showNotebookPreferencesPopup = false },
-            onColorChange = { /* Handle color change */ },
-            onBackgroundTypeChange = { /* Handle background type change */ },
-            onImageImport = { /* Handle image import */ }
+            onBackgroundColorChange = { /* Handle color change */ },
+            onLinedChange = { /* Handle background type change */ },
         )
 
 
