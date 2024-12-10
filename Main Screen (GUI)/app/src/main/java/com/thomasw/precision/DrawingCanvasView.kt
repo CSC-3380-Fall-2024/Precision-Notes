@@ -59,8 +59,6 @@ fun NotesPageWithDrawing(
 
     var expandedSettings by remember { mutableStateOf(false) }
     var showPensPopup by remember { mutableStateOf(false) }
-    var showNotebookPreferencesPopup by remember { mutableStateOf(false) }
-    var showExportPopup by remember { mutableStateOf(false) }
     var expandedFormula by remember { mutableStateOf(false) }
     var expandedArea by remember { mutableStateOf(false) }
     var expandedVolume by remember { mutableStateOf(false) }
@@ -74,7 +72,6 @@ fun NotesPageWithDrawing(
     var formula by remember { mutableStateOf("") }
     val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
     var printFormulas by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -85,11 +82,14 @@ fun NotesPageWithDrawing(
                 DrawingCanvasView(context).apply {
                     setBackgroundColor(Color.WHITE)
                     this.isFocusable = true
-                    this.isFocusableInTouchMode = true // Optional: Explicitly set the background
+                    this.isFocusableInTouchMode = true// Optional: Explicitly set the background
                     drawingCanvasView.value = this // Store reference
                 }
+                //LayoutInflater.from(context).inflate(R.layout.`latex_view.txt`, null)
+
             },
             modifier = Modifier.fillMaxSize()
+
         )
 
         // Top Bar
@@ -102,7 +102,8 @@ fun NotesPageWithDrawing(
         ) {
             // Back Button (Top Left)
             androidx.compose.material3.IconButton(onClick = {
-                drawingCanvasView.value?.dismissPopups()
+                // Simply pop the current screen from the navigation stack
+                drawingCanvasView.value?.dismissActivePopups()
                 navController.navigateUp()
             }) {
                 Icon(
@@ -119,18 +120,15 @@ fun NotesPageWithDrawing(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-
-            // Right-side buttons
+            //Right-side buttons
             Row {
-                // Export Button
-                androidx.compose.material3.IconButton(onClick = { showExportPopup = true }) {
+                androidx.compose.material3.IconButton(onClick = { /* Add Share functionality */ }) {
                     Icon(
                         imageVector = Icons.Default.Share,
-                        contentDescription = "Export Button"
+                        contentDescription = "Share Button"
                     )
                 }
 
-                // Settings Button
                 androidx.compose.material3.IconButton(onClick = { expandedSettings = true }) {
                     Icon(
                         imageVector = Icons.Default.Settings,
@@ -138,7 +136,6 @@ fun NotesPageWithDrawing(
                     )
                 }
 
-                // Settings Dropdown
                 androidx.compose.material3.DropdownMenu(
                     expanded = expandedSettings,
                     onDismissRequest = { expandedSettings = false }
@@ -154,7 +151,6 @@ fun NotesPageWithDrawing(
                         text = { Text("Notebook Preferences") },
                         onClick = {
                             expandedSettings = false
-                            showNotebookPreferencesPopup = true
                         }
                     )
                     DropdownMenuItem(
@@ -165,7 +161,6 @@ fun NotesPageWithDrawing(
                     )
                 }
 
-                // Pens Popup
                 PensPopup(
                     showPopup = showPensPopup,
                     onDismiss = { showPensPopup = false },
@@ -180,39 +175,6 @@ fun NotesPageWithDrawing(
                             color = color,
                             size = drawingCanvasView.value?.currentSize ?: 8f
                         )
-                    }
-                )
-
-                // Notebook Preferences Popup
-                NotebookPreferencesPopup(
-                    showPopup = showNotebookPreferencesPopup,
-                    onDismiss = { showNotebookPreferencesPopup = false },
-                    onBackgroundColorChange = { isBlack ->
-                        drawingCanvasView.value?.setBackgroundColorPreference(isBlack)
-                    },
-                    onLinedChange = { isLined ->
-                        drawingCanvasView.value?.setBackgroundLinedPreference(isLined)
-                    }
-                )
-
-                // Export Popup
-                ExportPopup(
-                    showPopup = showExportPopup,
-                    onDismiss = { showExportPopup = false },
-                    onExport = {
-                        val filePath = drawingCanvasView.value?.exportAsPdf(
-                            context = context,
-                            fileName = "Notebook_${System.currentTimeMillis()}"
-                        )
-                        if (filePath != null) {
-                            Toast.makeText(context, "PDF saved to $filePath", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    onCopyLink = { filePath ->
-                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                        val clip = android.content.ClipData.newPlainText("PDF Link", filePath)
-                        clipboard.setPrimaryClip(clip)
-                        Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
                     }
                 )
 
@@ -919,57 +881,6 @@ class DrawingCanvasView @JvmOverloads constructor(
         showFormulaOverlay(formula)
     }
 
-    // New Method for Notebook Background Color Preference
-    fun setBackgroundColorPreference(isBlack: Boolean) {
-        setBackgroundColor(if (isBlack) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
-        invalidate()
-    }
-
-    // New Method for Notebook Lined Preference
-    fun setBackgroundLinedPreference(isLined: Boolean) {
-        if (isLined) {
-            val lineSpacing = 100 // Example spacing between lines
-            val linePaint = Paint().apply {
-                color = android.graphics.Color.GRAY
-                strokeWidth = 2f
-            }
-
-            val canvas = Canvas()
-            for (y in 0..height step lineSpacing) {
-                canvas.drawLine(0f, y.toFloat(), width.toFloat(), y.toFloat(), linePaint)
-            }
-        } else {
-            path.reset()
-        }
-        invalidate()
-    }
-
-    // New Method for Exporting as PDF
-    fun exportAsPdf(context: Context, fileName: String): String? {
-        val pdfDocument = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
-        val page = pdfDocument.startPage(pageInfo)
-
-        // Draw the canvas content onto the PDF page
-        this.draw(page.canvas)
-        pdfDocument.finishPage(page)
-
-        // Save the PDF to a file
-        val directory = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "PrecisionNotes")
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
-        val file = File(directory, "$fileName.pdf")
-        return try {
-            pdfDocument.writeTo(FileOutputStream(file))
-            pdfDocument.close()
-            file.absolutePath
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (typingEnabled) {
             when (keyCode) {
@@ -998,6 +909,28 @@ class DrawingCanvasView @JvmOverloads constructor(
         }
         return super.onKeyUp(keyCode, event)
     }
+//    private val pathPaint = Paint().apply {
+//        color = Color.BLACK
+//        isAntiAlias = true
+//        strokeWidth = 8f
+//        style = Paint.Style.STROKE
+//        strokeJoin = Paint.Join.ROUND
+//        strokeCap = Paint.Cap.ROUND
+//    }
+
+//    private val textPaint = Paint().apply {
+//        color = Color.BLUE
+//        textSize = 50f
+//        isAntiAlias = true
+//    }
+
+    //private val path = Path()
+    //private val texts = mutableListOf<Pair<String, Pair<Float, Float>>>()
+
+    //private var typingEnabled = false
+    //private var currentText = StringBuilder()
+    //private var cursorPosition: Pair<Float, Float>? = null
+
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
@@ -1008,11 +941,13 @@ class DrawingCanvasView @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> {
                 when (toolType) {
                     MotionEvent.TOOL_TYPE_MOUSE -> {
+                        // Enable text input on mouse click
                         cursorPosition = Pair(x, y)
                         typingEnabled = true
                         invalidate()
                     }
                     MotionEvent.TOOL_TYPE_FINGER, MotionEvent.TOOL_TYPE_STYLUS -> {
+                        // Enable drawing
                         typingEnabled = false
                         path.moveTo(x, y)
                         return true
@@ -1020,11 +955,13 @@ class DrawingCanvasView @JvmOverloads constructor(
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                if (toolType == MotionEvent.TOOL_TYPE_FINGER || MotionEvent.TOOL_TYPE_STYLUS) {
+                if (toolType == MotionEvent.TOOL_TYPE_FINGER || toolType == MotionEvent.TOOL_TYPE_STYLUS) {
                     path.lineTo(x, y)
                 }
             }
-            MotionEvent.ACTION_UP -> {}
+            MotionEvent.ACTION_UP -> {
+                // Optional: Do something when touch is lifted
+            }
         }
         invalidate()
         return true
@@ -1036,10 +973,12 @@ class DrawingCanvasView @JvmOverloads constructor(
         pathPaint.strokeWidth = currentSize
         canvas.drawPath(path, pathPaint)
 
+        // Draw the existing text
         texts.forEach { (text, position) ->
             canvas.drawText(text, position.first, position.second, textPaint)
         }
 
+        // Draw the current typing text
         cursorPosition?.let { position ->
             if (typingEnabled && currentText.isNotEmpty()) {
                 canvas.drawText(currentText.toString(), position.first, position.second, textPaint)
@@ -1056,6 +995,7 @@ class DrawingCanvasView @JvmOverloads constructor(
         if (typingEnabled) {
             when (keyCode) {
                 android.view.KeyEvent.KEYCODE_DEL -> {
+                    // Handle backspace
                     if (currentText.isNotEmpty()) {
                         currentText.deleteCharAt(currentText.length - 1)
                     }
@@ -1090,16 +1030,24 @@ class DrawingCanvasView @JvmOverloads constructor(
         invalidate()
     }
 
+
+    // Global or shared set to track active formulas
+    // Global or shared set to track active formulas
     val activeFormulas = mutableSetOf<String>()
-    val activePopups = mutableListOf<PopupWindow>()
+    val activePopups = mutableListOf<PopupWindow>() // To track active PopupWindows
 
     fun showFormulaOverlay(formula: String) {
+
+        // Add the formula to the active set
         activeFormulas.add(formula)
 
+        // Inflate the layout for the LaTeX formula
         val inflater = LayoutInflater.from(context)
         val layout = inflater.inflate(R.layout.latex_view, null)
+
         layout.setBackgroundColor(Color.TRANSPARENT)
 
+        // Find the JLatexMathView and set the LaTeX formula
         val latexMathView = layout.findViewById<ru.noties.jlatexmath.JLatexMathView>(R.id.j_latex_math_view)
         latexMathView?.setBackgroundColor(Color.TRANSPARENT)
 
@@ -1109,11 +1057,13 @@ class DrawingCanvasView @JvmOverloads constructor(
             Log.e("Debug", "Error setting LaTeX formula: ${e.message}")
         }
 
+        // Create and show the PopupWindow
         val popupWindow = PopupWindow(layout, 500, 250, true)
         popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupWindow.isFocusable = false
         popupWindow.isOutsideTouchable = false
 
+        // Track this PopupWindow
         activePopups.add(popupWindow)
 
         // Set touch listener for moving the PopupWindow
@@ -1151,6 +1101,9 @@ class DrawingCanvasView @JvmOverloads constructor(
         activeFormulas.clear()
     }
 }
+
+
+
 
 
 
