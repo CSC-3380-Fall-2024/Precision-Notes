@@ -244,7 +244,7 @@ fun TitleScreen(
         PensPopup(
             showPopup = showPensPopup,
             onDismiss = { showPensPopup = false },
-            onSizeChange = { /* Handle size change */ },
+            onSizeChange = { /* Handle Pens size change */ },
             onColorChange = { /* Handle color change */ }
         )
 

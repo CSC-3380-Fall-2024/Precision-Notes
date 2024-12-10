@@ -58,62 +58,62 @@ import java.io.FileOutputStream
 
 
 @Composable
-fun NotesPageWithDrawing(
-    navController: NavController,
-) {
-    println("Navigating to NotesPageWithDrawing DRAWING CANVAS")
+            fun NotesPageWithDrawing(
+                navController: NavController,
+            ) {
+                println("Navigating to NotesPageWithDrawing DRAWING CANVAS")
 
-    val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
-    var expandedSettings by remember { mutableStateOf(false) }
-    var showPensPopup by remember { mutableStateOf(false) }
+                val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
+                var expandedSettings by remember { mutableStateOf(false) }
+                var showPensPopup by remember { mutableStateOf(false) }
 
-    //formulas
-    var expandedFormula by remember { mutableStateOf(false) }
-    var expandedArea by remember { mutableStateOf(false) }
-    var expandedVolume by remember { mutableStateOf(false) }
-    var expandedGeometry by remember { mutableStateOf(false) }
-    var expandedTrigonometry by remember { mutableStateOf(false) }
-    var expandedDerivatives by remember { mutableStateOf(false) }
-    var expandedIntegrals by remember { mutableStateOf(false) }
-    var expandedStatistics by remember { mutableStateOf(false) }
-    var expandedLogarithms by remember { mutableStateOf(false) }
-    var expandedStandardEquations by remember { mutableStateOf(false) }
-    var formula by remember { mutableStateOf("") }
-    var printFormulas by remember { mutableStateOf(false) }
-
-
-
-    //notebook
-    var showNotebookPreferences by remember { mutableStateOf(false) }
-
-    //export
-    var showExportPopup by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        AndroidView(
-            factory = { context ->
-                DrawingCanvasView(context).apply {
-                    setBackgroundColor(Color.WHITE)
-                    this.isFocusable = true
-                    this.isFocusableInTouchMode = true// Optional: Explicitly set the background
-                    drawingCanvasView.value = this // Store reference
-                }
-                //LayoutInflater.from(context).inflate(R.layout.`latex_view.txt`, null)
-
-            },
-            modifier = Modifier.fillMaxSize()
-
-        )
+                //formulas
+                var expandedFormula by remember { mutableStateOf(false) }
+                var expandedArea by remember { mutableStateOf(false) }
+                var expandedVolume by remember { mutableStateOf(false) }
+                var expandedGeometry by remember { mutableStateOf(false) }
+                var expandedTrigonometry by remember { mutableStateOf(false) }
+                var expandedDerivatives by remember { mutableStateOf(false) }
+                var expandedIntegrals by remember { mutableStateOf(false) }
+                var expandedStatistics by remember { mutableStateOf(false) }
+                var expandedLogarithms by remember { mutableStateOf(false) }
+                var expandedStandardEquations by remember { mutableStateOf(false) }
+                var formula by remember { mutableStateOf("") }
+                var printFormulas by remember { mutableStateOf(false) }
 
 
 
-        // Top Bar
-        Row(
-            modifier = Modifier
+                //notebook
+                var showNotebookPreferences by remember { mutableStateOf(false) }
+
+                //export
+                var showExportPopup by remember { mutableStateOf(false) }
+                val context = LocalContext.current
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    AndroidView(
+                        factory = { context ->
+                            DrawingCanvasView(context).apply {
+                                setBackgroundColor(Color.WHITE)
+                                this.isFocusable = true
+                                this.isFocusableInTouchMode = true// Optional: Explicitly set the background
+                                drawingCanvasView.value = this // Store reference
+                            }
+                            //LayoutInflater.from(context).inflate(R.layout.`latex_view.txt`, null)
+
+                        },
+                        modifier = Modifier.fillMaxSize()
+
+                    )
+
+
+
+                    // Top Bar
+                    Row(
+                        modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -930,6 +930,41 @@ class DrawingCanvasView @JvmOverloads constructor(
     fun ShowFormulaInOverlay(formula: String) {
         showFormulaOverlay(formula)
     }
+    @Composable
+    fun PensPopup(
+        showPopup: Boolean,
+        onDismiss: () -> Unit,
+        onSizeChange: (Float) -> Unit
+    ) {
+        if (showPopup) {
+            AlertDialog(
+                onDismissRequest = { onDismiss() },
+                title = { Text("Adjust Pen Settings") },
+                text = {
+                    Column {
+                        // Size change section
+                        Text("Choose Pen Size:")
+                        var penSize by remember { mutableStateOf(20f) } // Default size
+                        Slider(
+                            value = penSize,
+                            onValueChange = { size ->
+                                penSize = size
+                                onSizeChange(size)
+                            },
+                            valueRange = 1f..50f, // Range of sizes
+                            steps = 49 // Number of steps in the slider
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { onDismiss() }) {
+                        Text("Done")
+                    }
+                }
+            )
+        }
+    }
+
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (typingEnabled) {
@@ -1017,6 +1052,7 @@ class DrawingCanvasView @JvmOverloads constructor(
     fun updatePenSettings(color: Any, size: Float) {
         currentColor = color as androidx.compose.ui.graphics.Color
         currentSize = size
+        invalidate()
     }
 
     fun addTypedText(keyCode: Int) {
