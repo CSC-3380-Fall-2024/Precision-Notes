@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.ColorDrawable
+import android.graphics.pdf.PdfDocument
+import android.os.Environment
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -39,6 +41,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.compose.ui.unit.sp
 
 import androidx.compose.foundation.layout.padding
@@ -47,9 +50,11 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.thomasw.precision.ui.NotebookPreferencesPopup
-import com.thomasw.precision.ui.PensPopup
+import com.thomasw.precision.ui.*
+import java.io.File
+import java.io.FileOutputStream
 
 
 @Composable
@@ -58,8 +63,11 @@ fun NotesPageWithDrawing(
 ) {
     println("Navigating to NotesPageWithDrawing DRAWING CANVAS")
 
+    val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
     var expandedSettings by remember { mutableStateOf(false) }
     var showPensPopup by remember { mutableStateOf(false) }
+
+    //formulas
     var expandedFormula by remember { mutableStateOf(false) }
     var expandedArea by remember { mutableStateOf(false) }
     var expandedVolume by remember { mutableStateOf(false) }
@@ -71,9 +79,16 @@ fun NotesPageWithDrawing(
     var expandedLogarithms by remember { mutableStateOf(false) }
     var expandedStandardEquations by remember { mutableStateOf(false) }
     var formula by remember { mutableStateOf("") }
-    val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
     var printFormulas by remember { mutableStateOf(false) }
+
+
+
+    //notebook
     var showNotebookPreferences by remember { mutableStateOf(false) }
+
+    //export
+    var showExportPopup by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -93,6 +108,8 @@ fun NotesPageWithDrawing(
             modifier = Modifier.fillMaxSize()
 
         )
+
+
 
         // Top Bar
         Row(
@@ -124,7 +141,7 @@ fun NotesPageWithDrawing(
             }
             //Right-side buttons
             Row {
-                androidx.compose.material3.IconButton(onClick = { /* Add Share functionality */ }) {
+                androidx.compose.material3.IconButton(onClick = { showExportPopup = true }) {
                     Icon(
                         imageVector = Icons.Default.Share,
                         contentDescription = "Share Button"
@@ -194,6 +211,23 @@ fun NotesPageWithDrawing(
                     }
                 )
 
+                // Export Popup
+                ExportPopup(
+                    showPopup = showExportPopup,
+                    onDismiss = { showExportPopup = false },
+                    onExport = {
+                        val filePath = drawingCanvasView.value?.exportAsPdf(context, "Notebook_${System.currentTimeMillis()}")
+                        if (filePath != null) {
+                            Toast.makeText(context, "PDF saved to $filePath", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    onCopyLink = { filePath ->
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                        val clip = android.content.ClipData.newPlainText("PDF Link", filePath)
+                        clipboard.setPrimaryClip(clip)
+                        Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show()
+                    }
+                )
 
 
                 androidx.compose.material3.DropdownMenu(
@@ -925,28 +959,6 @@ class DrawingCanvasView @JvmOverloads constructor(
         }
         return super.onKeyUp(keyCode, event)
     }
-//    private val pathPaint = Paint().apply {
-//        color = Color.BLACK
-//        isAntiAlias = true
-//        strokeWidth = 8f
-//        style = Paint.Style.STROKE
-//        strokeJoin = Paint.Join.ROUND
-//        strokeCap = Paint.Cap.ROUND
-//    }
-
-//    private val textPaint = Paint().apply {
-//        color = Color.BLUE
-//        textSize = 50f
-//        isAntiAlias = true
-//    }
-
-    //private val path = Path()
-    //private val texts = mutableListOf<Pair<String, Pair<Float, Float>>>()
-
-    //private var typingEnabled = false
-    //private var currentText = StringBuilder()
-    //private var cursorPosition: Pair<Float, Float>? = null
-
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
@@ -1142,55 +1154,30 @@ class DrawingCanvasView @JvmOverloads constructor(
         activePopups.clear()
         activeFormulas.clear()
     }
+
+    // New method to export as PDF
+    fun exportAsPdf(context: Context, fileName: String): String? {
+        val pdfDocument = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+
+        // Draw the canvas content onto the PDF page
+        this.draw(page.canvas)
+        pdfDocument.finishPage(page)
+
+        // Save the PDF to a file
+        val directory = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "PrecisionNotes")
+        if (!directory.exists()) {
+            directory.mkdirs()
+        }
+        val file = File(directory, "$fileName.pdf")
+        return try {
+            pdfDocument.writeTo(FileOutputStream(file))
+            pdfDocument.close()
+            file.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 }
-
-
-
-
-
-
-//    private fun showPenSizeChooserDialog() {
-//        val penDialog = Dialog(this)
-//        penDialog.setContentView(R.layout.dialog_pen_size)
-//        penDialog.setTitle("Pen size: ")
-//        val smallBtn = penDialog.findViewById<View>(R.id.ib_small_pen)
-//        val mediumBtn = penDialog.findViewById<View>(R.id.ib_medium_pen)
-//        val largeBtn = penDialog.findViewById<View>(R.id.ib_large_pen)
-//        // Small size Pen
-//        smallBtn?.setOnClickListener {
-//            drawingView?.setSizeForPen(10.toFloat())
-//            penDialog.dismiss()
-//        }
-//        // Medium size Pen
-//        mediumBtn?.setOnClickListener {
-//            drawingView?.setSizeForPen(20.toFloat())
-//            penDialog.dismiss()
-//        }
-//        // Large size pen
-//        largeBtn?.setOnClickListener {
-//            drawingView?.setSizeForPen(30.toFloat())
-//            penDialog.dismiss()
-//        }
-//        // Shows pen dialog
-//        penDialog.show()
-//    }
-//
-//    fun colorClicked(view: View){
-//        if(view !== mImageButtonCurrentPaint){
-//            val imageButton = view as ImageButton
-//            val colorTag = imageButton.tag.toString()
-//            drawingView?.setColor(colorTag)
-//
-//            imageButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.pallet_pressed)
-//
-//            )
-//            mImageButtonCurrentPaint?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.pallet_normal)
-//
-//            )
-//
-//
-//            mImageButtonCurrentPaint = view
-//
-//        }
-//    }
-

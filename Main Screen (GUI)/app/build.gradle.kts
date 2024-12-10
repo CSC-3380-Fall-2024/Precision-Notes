@@ -100,10 +100,6 @@ dependencies {
 
     implementation ("androidx.appcompat:appcompat:1.6.1")
 
-
-
-
-
-
-
+    // PDF generation dependency
+    implementation("androidx.print:print:1.1.0-beta01")
 }
