@@ -110,7 +110,8 @@ fun TitleScreen(
                     folders.addAll(currentParentFolder?.let { FolderManager.getSubfolders(it) } ?: emptyList())
                 }
                 showDialog = false
-            }
+            },
+            onDismissRequest = { showDialog = false }
         )
     }
 

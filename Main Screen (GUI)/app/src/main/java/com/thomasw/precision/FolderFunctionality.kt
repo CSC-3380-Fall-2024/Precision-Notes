@@ -63,9 +63,6 @@ class FolderFunctionality {
                         modifier = Modifier.fillMaxSize(),
                         navController = navController
                     )
-                } else {
-                    // Handle the case where folderName is null or invalid
-                    // You can navigate back or show an error screen
                 }
             }
         }
@@ -77,7 +74,8 @@ class FolderFunctionality {
         showDialog: Boolean,
         folderNameInput: TextFieldValue,
         onFolderNameChange: (TextFieldValue) -> Unit,
-        onFolderCreated: (String) -> Unit
+        onFolderCreated: (String) -> Unit,
+        onDismissRequest: () -> Unit
     ) {
         if (showDialog) {
             AlertDialog(
@@ -100,7 +98,9 @@ class FolderFunctionality {
                     }
                 },
                 dismissButton = {
-                    Button(onClick = { /* Handle cancel */ }) {
+                    Button(onClick = { /* Handle cancel */
+                        onDismissRequest()
+                    }) {
                         Text("Cancel")
                     }
                 }
@@ -115,7 +115,8 @@ class FolderFunctionality {
             showDialog = true,
             folderNameInput = TextFieldValue("Sample Folder"),
             onFolderNameChange = {},
-            onFolderCreated = { folderName -> println("Folder Created: $folderName") }
+            onFolderCreated = { folderName -> println("Folder Created: $folderName") },
+            onDismissRequest = {}
         )
     }
 
