@@ -3,6 +3,7 @@ package com.thomasw.precision
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -60,7 +61,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavController
-
+import cdn.kotlincalculator.CalculatorApp
 
 @Composable
 fun NotesPageWithDrawing(
@@ -83,6 +84,11 @@ fun NotesPageWithDrawing(
     val drawingCanvasView = remember { mutableStateOf<DrawingCanvasView?>(null) }
 
 
+    var showCalculator by remember { mutableStateOf(false) }
+
+
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -92,16 +98,16 @@ fun NotesPageWithDrawing(
                 DrawingCanvasView(context).apply {
                     setBackgroundColor(Color.WHITE)
                     this.isFocusable = true
-                    this.isFocusableInTouchMode = true// Optional: Explicitly set the background
+                    this.isFocusableInTouchMode = true // Optional: Explicitly set the background
                     drawingCanvasView.value = this // Store reference
                 }
-                //LayoutInflater.from(context).inflate(R.layout.`latex_view.txt`, null)
-
             },
             modifier = Modifier.fillMaxSize()
-
         )
 
+        if (showCalculator) {
+            CalculatorApp()
+        }
         // Top Bar
         Row(
             modifier = Modifier
@@ -130,8 +136,10 @@ fun NotesPageWithDrawing(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-            //Right-side buttons
+
+            // Right-side buttons
             Row {
+                // Share Button
                 androidx.compose.material3.IconButton(onClick = { /* Add Share functionality */ }) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -139,13 +147,23 @@ fun NotesPageWithDrawing(
                     )
                 }
 
+                // Settings Button
                 androidx.compose.material3.IconButton(onClick = { expandedSettings = true }) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings Button"
                     )
                 }
+                // Add "Open Calculator" Button here
+                IconButton(onClick = { showCalculator = true}) {
+                    Icon(
+                        imageVector = Icons.Default.Calculate,
+                        contentDescription = "Open Calculator"
+                    )
+                }
 
+
+                // Dropdown menu for settings
                 androidx.compose.material3.DropdownMenu(
                     expanded = expandedSettings,
                     onDismissRequest = { expandedSettings = false }
@@ -987,8 +1005,6 @@ class DrawingCanvasView @JvmOverloads constructor(
         Log.d("Debug", "Popups cleared and formulas removed.")
     }
 }
-
-
 
 
 
