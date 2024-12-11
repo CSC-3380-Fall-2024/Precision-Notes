@@ -13,17 +13,6 @@ We hope and wish that this application will be used by students to improve their
 
 Designs and Documentation:
 Documentation can be found within the "Design and Documentation" directory. This directory contains a UI blueprint and a design report amoong other things.
-
-
-Flashcards Functionality:
-  Android Studio Files (Ease of Access):
-
-  Precision-Notes\src (Flashcard)\Code Features (Flashcards)\app\src\main\java\MainActivity.kt" (This is main_activity for the Flashcard functionality. This contains the coded functions that allow for the flashcard mechanisms.)
-  Precision-Notes\src (Flashcard)\Code Features (Flashcards)\app\src\main\res\layout"  (This contains the layout/GUI for the flashcard functionality.)
-
-
-FormulaLib:
-  Contains a list of formulas that can be used to render latex as dragable popup windows
   
 
 Important Notes:
