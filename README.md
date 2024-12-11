@@ -1,7 +1,7 @@
 # Precision Notes
 
 Hi and Welcome to our Project "Precision-Notes"!
-Created by: Amy Granados, Cole Heausler, Konnor, Kendrick and Thomas Woodcum
+Created by: Amy Granados, Cole Heausler, Konnor Trosclair, Kendrick Manchester and Thomas Woodcum
 
 We are/were currently students at LSU (Louisiana State Univeristy), taking a project class: 3380 Object-Orientated Design.
 
