@@ -35,9 +35,10 @@ For accessing the repo, follow these steps:
 4) You can move whatever folders/files into here (please make it organized.)
 5) Then you can use android studio to create new branches, all of these functions should be under the git tab.
    
-
 Use guide for our Application:
 
+  STEP 1: Ensure succesful download of AndroidStudio most recent vers. https://developer.android.com/studio (Link is provided for easy download.)
+  STEP 2: Ensure that is successfully downloaded. Run the IDE Application, and attempt to load  the project within a project. (Navigate to file explorer, and open "MAIN GUI"
   
   HUB:
     The "HUB" is the default space for users when opening the application. They are greeted with a near blank page with a header and several drop down menus. These menus contain connecting functionality to other sections of our application (read more below.)
@@ -60,7 +61,8 @@ a) NOTEBOOK
 
   ![Screenshot 2024-11-25 165838](https://github.com/user-attachments/assets/3a5bf3ec-f41f-4c18-bc43-b757da558502)
 
-b) FLASHCARD
+b) FLASHCARD 
+  IMPORTANT! FLASHCARD CODE IS NOT CONNECTED DIRECTLY TO MAIN HUB! YOU MUST LOAD THE FLASHCARD SEPERATELY! (Try loading as if you were opening another proejct in AndroidStudio's file directory system. Then run.)
 
    MANAGEMENT LIST
    
