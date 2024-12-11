@@ -52,6 +52,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import cdn.kotlincalculator.CalculatorApp
 import com.thomasw.precision.ui.*
 import java.io.File
 import java.io.FileOutputStream
@@ -90,6 +91,9 @@ fun NotesPageWithDrawing(
     var showExportPopup by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
+    var showCalculator by remember { mutableStateOf(false) }
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -109,7 +113,9 @@ fun NotesPageWithDrawing(
 
         )
 
-
+        if (showCalculator) {
+            CalculatorApp()
+        }
 
         // Top Bar
         Row(
@@ -152,6 +158,13 @@ fun NotesPageWithDrawing(
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings Button"
+                    )
+                }
+
+                IconButton(onClick = { showCalculator = true }){
+                    Icon(
+                        imageVector = Icons.Default.Calculate,
+                        contentDescription = "Calculator Button"
                     )
                 }
 
