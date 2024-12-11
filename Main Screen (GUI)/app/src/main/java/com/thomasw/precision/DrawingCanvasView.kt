@@ -926,6 +926,14 @@ class DrawingCanvasView @JvmOverloads constructor(
     private var currentText = StringBuilder()
     private var cursorPosition: Pair<Float, Float>? = null
 
+    private var isLinedBackground = false // Flag to track lined background preference
+
+    private val linePaint = Paint().apply {
+        color = android.graphics.Color.GRAY
+        strokeWidth = 2f
+        isAntiAlias = true
+    }
+
     @Composable
     fun ShowFormulaInOverlay(formula: String) {
         showFormulaOverlay(formula)
@@ -997,6 +1005,15 @@ class DrawingCanvasView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        // Draw lined background if enabled
+        if (isLinedBackground) {
+            val lineSpacing = 100 // Example spacing between lines
+            for (y in 0..height step lineSpacing) {
+                canvas.drawLine(0f, y.toFloat(), width.toFloat(), y.toFloat(), linePaint)
+            }
+        }
+
         pathPaint.color = currentColor.toArgb()
         pathPaint.strokeWidth = currentSize
         canvas.drawPath(path, pathPaint)
@@ -1058,35 +1075,16 @@ class DrawingCanvasView @JvmOverloads constructor(
         invalidate()
     }
 
-
-    // New methods for background preferences
     fun setBackgroundColorPreference(isBlack: Boolean) {
         setBackgroundColor(if (isBlack) Color.BLACK else Color.WHITE)
         invalidate() // Redraw the canvas with the updated background color
     }
 
     fun setBackgroundLinedPreference(isLined: Boolean) {
-        // Logic to draw lines if "lined" is true
-        if (isLined) {
-            val lineSpacing = 100 // Example spacing between lines
-            val linePaint = Paint().apply {
-                color = android.graphics.Color.GRAY
-                strokeWidth = 2f
-            }
-
-            val canvas = Canvas()
-            for (y in 0..height step lineSpacing) {
-                canvas.drawLine(0f, y.toFloat(), width.toFloat(), y.toFloat(), linePaint)
-            }
-        } else {
-            path.reset() // Reset the canvas if "lined" is disabled
-        }
+        isLinedBackground = isLined
         invalidate() // Trigger a redraw
     }
 
-
-    // Global or shared set to track active formulas
-    // Global or shared set to track active formulas
     val activeFormulas = mutableSetOf<String>()
     val activePopups = mutableListOf<PopupWindow>() // To track active PopupWindows
 
@@ -1146,7 +1144,6 @@ class DrawingCanvasView @JvmOverloads constructor(
         popupWindow.showAtLocation(layout, Gravity.CENTER, 0, 0)
     }
 
-    // Dismiss all active PopupWindows
     fun dismissActivePopups() {
         for (popup in activePopups) {
             popup.dismiss()
@@ -1155,7 +1152,6 @@ class DrawingCanvasView @JvmOverloads constructor(
         activeFormulas.clear()
     }
 
-    // New method to export as PDF
     fun exportAsPdf(context: Context, fileName: String): String? {
         val pdfDocument = PdfDocument()
         val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
