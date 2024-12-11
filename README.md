@@ -94,6 +94,8 @@ c) FOLDER
   ![Screenshot 2024-11-25 170250](https://github.com/user-attachments/assets/48eb23b6-99c8-4501-a46d-9d0f4481d0ce)
   ![Screenshot 2024-11-25 170322](https://github.com/user-attachments/assets/6ef75ca5-abec-49b0-8107-e31636b08423)
 
+D) PEN COLORS AND SIZE
+Upon clicking the "Settings" button, users will see "Pens." Users can click that and will see a horizontal bar that is used to adjust size, and then a row of colorful circles to choose colors. To change the size of the pens, there is a vertical bar. Users are going to swipe it to change the size: to the left to decrease size and to the right to increase it. Users can click on a specific color circle to make their pen that color. When users are done picking the desired size and color, they can press the "Done" button to use their pen.
               
 
 
