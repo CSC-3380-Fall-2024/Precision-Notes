@@ -7,7 +7,7 @@ We are/were currently students at LSU (Louisiana State Univeristy), taking a pro
 
 
 Goal: 
-The goal of this application is to create a interactive applicative with note-taking properties. The application consists of a general homepage, with several subfunctions (Calculator, Flashcards, etc.)
+The goal of this project is to create an interactive application with note-taking properties. The application consists of a general homepage with several subfunctions (Calculator, Flashcards, etc.)
 We hope and wish that this application will be used by students to improve their academic standings and change study habits.
 
 
@@ -28,7 +28,11 @@ For accessing the repo, follow these steps:
 Use guide for our Application:
 
   STEP 1: Ensure succesful download of AndroidStudio most recent vers. https://developer.android.com/studio (Link is provided for easy download.)
-  STEP 2: Ensure that is successfully downloaded. Run the IDE Application, and attempt to load  the project within a project. (Navigate to file explorer, and open "MAIN GUI"
+  STEP 2: Ensure that it is successfully downloaded and run the IDE Application.
+  STEP 3: When you open Andorid Studios, select and open the folder Precision-Notes.
+  STEP 4: Once you are in the Precision-Notes folder click on "File" and then "Open". Inside of the Precison-Notes folder navigate to the folder called "Main Screen (GUI)" and open it. 
+  STEP 5: Once you are in the Main Screen (GUI) folder, sync the gradle by clicking the elephant icon in the top left corner to make sure all of the dependencies are wokring.
+  STEP 6: Select Phone or Tablet from the configurations and Run the application!
   
   HUB:
     The "HUB" is the default space for users when opening the application. They are greeted with a near blank page with a header and several drop down menus. These menus contain connecting functionality to other sections of our application (read more below.)
