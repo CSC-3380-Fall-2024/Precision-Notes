@@ -1,6 +1,7 @@
 # Precision Notes
 
 Hi and Welcome to our Project "Precision-Notes"!
+
 Created by: Amy Granados, Cole Heausler, Konnor Trosclair, Kendrick Manchester and Thomas Woodcum
 
 We are/were currently students at LSU (Louisiana State Univeristy), taking a project class: 3380 Object-Orientated Design.
@@ -106,8 +107,6 @@ E) Calculator
 This calculator app is a simple yet functional tool created using Kotlin and Jetpack Compose. It allows users to perform various calculations, such as addition, subtraction, multiplication, division, and more complex operations like exponentiation and square roots. The app maintains a history of the last 10 calculations for easy reference. If a user inputs an incorrect expression, the app alerts them with a friendly error message. It’s designed to be intuitive and smooth, making it easy to handle everyday math tasks.  
 
 Bug: Calculator buttons will overlap in the Landscape Version. Please keep in portrait will using the calculator.
-
-
 
 
 
