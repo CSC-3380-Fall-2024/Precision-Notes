@@ -30,10 +30,12 @@ Use guide for our Application:
 
   STEP 1: Ensure succesful download of AndroidStudio most recent vers. https://developer.android.com/studio (Link is provided for easy download.)
   STEP 2: Ensure that it is successfully downloaded and run the IDE Application.
-  STEP 3: When you open Andorid Studios, select and open the folder Precision-Notes.
-  STEP 4: Once you are in the Precision-Notes folder click on "File" and then "Open". Inside of the Precison-Notes folder navigate to the folder called "Main Screen (GUI)" and open it. 
+  STEP 3: When you open Andorid Studios, press the hamburger symbol at the top left then press file and select open and navigate to Precision-Notes.
+  STEP 4: Once you are in the Precision-Notes folder click on the hamburger symbol at the top left then click "File" and then "Open". Inside of the Precison-Notes folder navigate to the folder called "Main Screen (GUI)" and open it. 
   STEP 5: Once you are in the Main Screen (GUI) folder, sync the gradle by clicking the elephant icon in the top right corner to make sure all of the dependencies are wokring.
-  STEP 6: Select Phone or Tablet from the configurations and Run the application!
+  STEP 6: To change the device you are using from a phone to a tablet you can press the phone symbol on the far right of the screen it should pop up with device manager when hovering your mouse over it.
+  STEP 7: To create a new device you can click on the plus button after pressing device manager. Then you press create virtual device (you can run whatever tablet you prefer but we recomend you use Pixel Tablet API 35 as this was the one we used when designing the project) the tablet can be accessed by pressing tablet then navigate to pixel tablet and click on that.
+  STEP 8: to finally run the project you can press the green play button at the top of the screen then you can press the plus button to change the device as needed.
   
   HUB:
     The "HUB" is the default space for users when opening the application. They are greeted with a near blank page with a header and several drop down menus. These menus contain connecting functionality to other sections of our application (read more below.)
@@ -42,18 +44,10 @@ Use guide for our Application:
 ![Screenshot 2024-11-25 170022](https://github.com/user-attachments/assets/eb2e8114-a99d-4cde-9099-81795217dd15)
 ![Screenshot 2024-11-25 170048](https://github.com/user-attachments/assets/4a082cf7-8426-4af3-af4b-d5d23eaa2b2a)
 
-  FLASHCARDS:
-    The "FLASHCARDS" are supposed to a helpful tool for users to use in order to learn material and practice memorization. It is designed for students in mind but, can also be used by other demographics.
-    The application works as follows:
-
-   1)  **TITLE SCREEN **
-        It initially opens up to a title screen, upon clicking the button it directs the users to the management section.
-
-        **(+) TAB **
 
 a) NOTEBOOK
   - Upon clicking the NOTEBOOK tab a blank page will appear. On this page user's are able to draw whatever they wish upon clicking the screen. Currently, there is no eraser so users have to leave the screen to restart drawing.
-  - The notebook aslo has a formula button that can be accessed by pressing the gear icon, then pressing formulas which it will display a list of formula categories that can be pressed with each category containing multiple formulas withint that field. Once a formula is clicked on it will be placed in the center of the screen and each formula can be dragged indavidually.
+  - The notebook aslo has a formula button that can be accessed by pressing the gear icon, then pressing formulas which it will display a list of formula categories that can be pressed with each category containing multiple formulas within that field. Once a formula is clicked on it will be placed in the center of the screen and each formula can be dragged indavidually. This uses the formulaLib.kt file which contains all the formulas. The formulas as render as LaTeX on the notebook screen.
   - Users can also export the current version of their notebook screen by pressing the gear icon then clickin gon export. This will export their notebook as a PDF saving it within the Android Studio IDE. The PDF's can be access by by going to the top of the Android Studio IDE and press the hamburger icon, then click view, Tool Windows, then press Device Explorer. Afterwards you will be prompt with a file directory. To access the PDF from here you go to /storage/emulated/0/Android/data/com.thomasw.precision/files/Documents/PrecisionNotes. Afterwards a list of PDFs should display we could not figure out how to navigate to the PDFs on the emulator so for now they can be accesed that way.
 
 
@@ -61,6 +55,10 @@ a) NOTEBOOK
 
 b) FLASHCARD 
   IMPORTANT! FLASHCARD CODE IS NOT CONNECTED DIRECTLY TO MAIN HUB! YOU MUST LOAD THE FLASHCARD SEPERATELY! (Try loading as if you were opening another proejct in AndroidStudio's file directory system. Then run.)
+  There is a certain way to get to the flash cards
+  STEP 1: press the hamburger symbol at the top left then navigated to file, open, then go to the folder (Code Features (Flashcards)) located at this path Precision-Notes\src (Flashcard)\Code Features (Flashcards)
+  STEP 2: sync the gradle by pressing the elephant symbol at the top right. (This may take a while as it did on some of our machines.)
+  STEP 3: Now you can run the project by pressing the play button at the top.
 
 ![Screenshot 2024-11-27 121255](https://github.com/user-attachments/assets/9472509f-d9a1-4af5-8a48-00350e51b4e4)
 
