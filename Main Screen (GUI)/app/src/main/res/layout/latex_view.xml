@@ -1,0 +1,22 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#CCFFFFFF"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <!-- JLatexMathView for rendering LaTeX formula -->
+    <ru.noties.jlatexmath.JLatexMathView
+        android:id="@+id/j_latex_math_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        app:jlmv_alignVertical="center"
+        app:jlmv_alignHorizontal="center"
+        app:jlmv_textSize="16sp"
+        android:layout_centerInParent="true" />
+
+
+</RelativeLayout>
