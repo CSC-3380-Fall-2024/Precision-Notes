@@ -23,8 +23,7 @@ Flashcards Functionality:
 
 
 FormulaLib:
-  Contains a list of calulcator functions and calculations to allow for faster computations for users. (This will work in conjuction with the calculation application.)
-
+  Contains a list of formulas that can be used to render latex as dragable popup windows
   
 
 Important Notes:
