@@ -55,6 +55,7 @@ a) NOTEBOOK
   - The notebook aslo has a formula button that can be accessed by pressing the gear icon, then pressing formulas which it will display a list of formula categories that can be pressed with each category containing multiple formulas withint that field. Once a formula is clicked on it will be placed in the center of the screen and each formula can be dragged indavidually.
   - Users can also export the current version of their notebook screen by pressing the gear icon then clickin gon export. This will export their notebook as a PDF saving it within the Android Studio IDE. The PDF's can be access by by going to the top of the Android Studio IDE and press the hamburger icon, then click view, Tool Windows, then press Device Explorer. Afterwards you will be prompt with a file directory. To access the PDF from here you go to /storage/emulated/0/Android/data/com.thomasw.precision/files/Documents/PrecisionNotes. Afterwards a list of PDFs should display we could not figure out how to navigate to the PDFs on the emulator so for now they can be accesed that way.
 
+
   ![Screenshot 2024-11-25 165838](https://github.com/user-attachments/assets/3a5bf3ec-f41f-4c18-bc43-b757da558502)
 
 b) FLASHCARD 
@@ -100,7 +101,12 @@ c) FOLDER
 
 D) PEN COLORS AND SIZE
 Upon clicking the "Settings" button, users will see "Pens." Users can click that and will see a horizontal bar that is used to adjust size, and then a row of colorful circles to choose colors. To change the size of the pens, there is a vertical bar. Users are going to swipe it to change the size: to the left to decrease size and to the right to increase it. Users can click on a specific color circle to make their pen that color. When users are done picking the desired size and color, they can press the "Done" button to use their pen.
-              
+
+E) Calculator 
+This calculator app is a simple yet functional tool created using Kotlin and Jetpack Compose. It allows users to perform various calculations, such as addition, subtraction, multiplication, division, and more complex operations like exponentiation and square roots. The app maintains a history of the last 10 calculations for easy reference. If a user inputs an incorrect expression, the app alerts them with a friendly error message. It’s designed to be intuitive and smooth, making it easy to handle everyday math tasks.  
+
+Bug: Calculator buttons will overlap in the Landscape Version. Please keep in portrait will using the calculator.
+
 
 
 
