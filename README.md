@@ -31,7 +31,7 @@ Use guide for our Application:
   STEP 2: Ensure that it is successfully downloaded and run the IDE Application.
   STEP 3: When you open Andorid Studios, select and open the folder Precision-Notes.
   STEP 4: Once you are in the Precision-Notes folder click on "File" and then "Open". Inside of the Precison-Notes folder navigate to the folder called "Main Screen (GUI)" and open it. 
-  STEP 5: Once you are in the Main Screen (GUI) folder, sync the gradle by clicking the elephant icon in the top left corner to make sure all of the dependencies are wokring.
+  STEP 5: Once you are in the Main Screen (GUI) folder, sync the gradle by clicking the elephant icon in the top right corner to make sure all of the dependencies are wokring.
   STEP 6: Select Phone or Tablet from the configurations and Run the application!
   
   HUB:
