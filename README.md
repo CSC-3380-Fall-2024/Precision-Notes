@@ -47,7 +47,9 @@ Use guide for our Application:
         **(+) TAB **
 
 a) NOTEBOOK
-  Upon clicking the NOTEBOOK tab a blank page will appear. On this page user's are able to draw whatever they wish upon clicking the screen. Currently, users have to leave
+  - Upon clicking the NOTEBOOK tab a blank page will appear. On this page user's are able to draw whatever they wish upon clicking the screen. Currently, there is no eraser so users have to leave the screen to restart drawing.
+  - The notebook aslo has a formula button that can be accessed by pressing the gear icon, then pressing formulas which it will display a list of formula categories that can be pressed with each category containing multiple formulas withint that field. Once a formula is clicked on it will be placed in the center of the screen and each formula can be dragged indavidually.
+  - Users can also export the current version of their notebook screen by pressing the gear icon then clickin gon export. This will export their notebook as a PDF saving it within the Android Studio IDE. The PDF's can be access by by going to the top of the Android Studio IDE and press the hamburger icon, then click view, Tool Windows, then press Device Explorer. Afterwards you will be prompt with a file directory. To access the PDF from here you go to /storage/emulated/0/Android/data/com.thomasw.precision/files/Documents/PrecisionNotes. Afterwards a list of PDFs should display we could not figure out how to navigate to the PDFs on the emulator so for now they can be accesed that way.
 
   ![Screenshot 2024-11-25 165838](https://github.com/user-attachments/assets/3a5bf3ec-f41f-4c18-bc43-b757da558502)
 
@@ -87,8 +89,7 @@ b) FLASHCARD
    This quits the application bringing the user back to the "MAIN" of the application to allow them to access other functions of our application.
 
 c) FOLDER
- 
-  Upon clicking the FOLDER tab, users will be prompted to provide a name for the newly created folder. Upon selection a new folder will be created, users can click on the folder to access its contents.
+    Upon clicking the plus symbol and selecting FOLDER tab, users will be prompted to provide a name for the newly created folder. Upon selection a new folder will be created, users can click on the folder to access its contents. The folders are set up to where there can be infinite subfolders. In order to keep track of what folder has what items we used an ID counter that increments by one for each folder created. The folders also go to the next line when the width of the screen is reached.
 
   ![Screenshot 2024-11-25 170250](https://github.com/user-attachments/assets/48eb23b6-99c8-4501-a46d-9d0f4481d0ce)
   ![Screenshot 2024-11-25 170322](https://github.com/user-attachments/assets/6ef75ca5-abec-49b0-8107-e31636b08423)
