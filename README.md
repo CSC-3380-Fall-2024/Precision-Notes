@@ -66,29 +66,37 @@ a) NOTEBOOK
 b) FLASHCARD 
   IMPORTANT! FLASHCARD CODE IS NOT CONNECTED DIRECTLY TO MAIN HUB! YOU MUST LOAD THE FLASHCARD SEPERATELY! (Try loading as if you were opening another proejct in AndroidStudio's file directory system. Then run.)
 
+![Screenshot 2024-11-27 121255](https://github.com/user-attachments/assets/9472509f-d9a1-4af5-8a48-00350e51b4e4)
+
    MANAGEMENT LIST
-   
-        The management list is a series of buttons of which each focusing on a different purpose.
+
+![Screenshot 2024-11-27 121333](https://github.com/user-attachments/assets/f55cf476-8a00-4146-989f-682dd0c4475e)
+
+  
+  The management list is a series of buttons of which each focusing on a different purpose.
 
   --"EDIT"
             
-            Edit is self-explanitory, it opens up a display UI allowing users to edit the type of question presented on the flashcard and the answer. Users can also create several other flashcards here with the "NEXT" which opens up a new card while also allowing them to move between cards with the "PREVIOUS" button. The "DELETE" button deletes the current flashcard out of the current list.
+   Edit is self-explanitory, it opens up a display UI allowing users to edit the type of question presented on the flashcard and the answer. Users can also create several other flashcards here with the "NEXT" which opens up a new card while also allowing them to move between cards with the "PREVIOUS" button. The "DELETE" button deletes the current flashcard out of the current list.
 
   --"LOAD"
             
-            The "LOAD" button allows users to load flashcards without making edits, this is to allow users to practice while still being presented with the answer that they provided inside of the "EDIT" section. This is different compared to the "RUN" function. (See Below)
+   The "LOAD" button allows users to load flashcards without making edits, this is to allow users to practice while still being presented with the answer that they provided inside of the "EDIT" section. This is different compared to the "RUN" function. (See Below)
 
   --"SAVE"
            
-            Saves the current flashcard list present in the "EDIT" button. Users must hit SAVE before entering to practice otherwise, the flashcards will be displayed with the default inofrmation. 
+   Saves the current flashcard list present in the "EDIT" button. Users must hit SAVE before entering to practice otherwise, the flashcards will be displayed with the default inofrmation. 
 
    --"RUN"
            
-            This runs the currently saved flashcards, putting them into a type-in-answer style practice session. The information present in the flashcard here is stored away and not present to the user. WHen inputting an answer to check if the response is correct, a Android Toast will appear at the bottom of the page. This Toast will confirm or deny whether the user inputted the answer saved to the flashcard correctly. Users may also hit the "NEXT" and "PREVIOUS" buttons to cycle between saved flashcards in order to maximize effective practice.
+   This runs the currently saved flashcards, putting them into a type-in-answer style practice session. The information present in the flashcard here is stored away and not present to the user. WHen inputting an answer to check if the response is correct, a Android Toast will appear at the bottom of the page. This Toast will confirm or deny whether the user inputted the answer saved to the flashcard correctly. Users may also hit the "NEXT" and "PREVIOUS" buttons to cycle between saved flashcards in order to maximize effective practice.
+   
+![Screenshot 2024-11-27 121349](https://github.com/user-attachments/assets/7b968837-3af4-4461-b243-afc64ecd25ff)
+![Screenshot 2024-11-27 121406](https://github.com/user-attachments/assets/df90d740-ce13-441e-bcce-8ca1649b6add)
 
    --"QUIT"
             
-            This quits the application bringing the user back to the "MAIN" of the application to allow them to access other functions of our application.
+   This quits the application bringing the user back to the "MAIN" of the application to allow them to access other functions of our application.
 
 c) FOLDER
  
