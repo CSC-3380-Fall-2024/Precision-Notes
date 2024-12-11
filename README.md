@@ -25,6 +25,8 @@ Flashcards Functionality:
 FormulaLib:
   Contains a list of calulcator functions and calculations to allow for faster computations for users. (This will work in conjuction with the calculation application.)
 
+  
+
 Important Notes:
 
 For accessing the repo, follow these steps:
