@@ -1,6 +1,7 @@
 package com.thomasw.precision
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,13 +20,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thomasw.precision.ui.theme.PrecisionTheme
 
-//folder imports -- Konor
-import com.thomasw.precision.FolderFunctionality.*
-import androidx.navigation.NavController
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Settings
 import androidx.navigation.compose.rememberNavController
-import android.widget.Toast
-import androidx.compose.ui.text.input.TextFieldValue
+import com.thomasw.precision.ui.PensPopup
+import com.thomasw.precision.ui.NotebookPreferencesPopup
 
+//folder imports -- Konor
+import androidx.navigation.NavController
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.ui.text.input.TextFieldValue
+import com.google.accompanist.flowlayout.FlowRow
+import ru.noties.jlatexmath.JLatexMathView
+
+
+
+
+// Define the interface outside of the onCreate method
+//interface OnContentViewChangeListener {
+//    fun onChangeContentView()
+//}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,12 +49,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             PrecisionTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    FolderFunctionality().AppNavigation()
+                    FolderFunctionality().FolderAppNavigation()
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun TitleScreen(
@@ -54,6 +70,13 @@ fun TitleScreen(
     var showDialog by remember { mutableStateOf(false) }
     var folderNameInput by remember { mutableStateOf(TextFieldValue()) }
     var currentParentFolder by remember { mutableStateOf<Folder?>(parentFolder) }  // Use parentFolder
+    //var folderNum by remember { mutableIntStateOf(0) }
+
+    //pens popup
+    var showPensPopup by remember { mutableStateOf(false) }
+
+    //notebook preferences popup
+    var showNotebookPreferencesPopup by remember { mutableStateOf(false) }
 
     // Determine the folders to show based on the parentFolder
     val folders = remember(currentParentFolder) {
@@ -76,6 +99,8 @@ fun TitleScreen(
             folderNameInput = folderNameInput,
             onFolderNameChange = { newText -> folderNameInput = newText },
             onFolderCreated = { folderName ->
+                //folderNum += 1;
+                Log.d("TitleScreen", "Folder Created: $folderName")
                 FolderManager.createFolder(currentParentFolder, folderName)
                 // Update the folder list after creation
                 folders.clear()
@@ -85,7 +110,8 @@ fun TitleScreen(
                     folders.addAll(currentParentFolder?.let { FolderManager.getSubfolders(it) } ?: emptyList())
                 }
                 showDialog = false
-            }
+            },
+            onDismissRequest = { showDialog = false }
         )
     }
 
@@ -117,9 +143,15 @@ fun TitleScreen(
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+
                 DropdownMenuItem(
                     text = { Text("Notebook") },
-                    onClick = { /* Handle Create Notebook */ },
+                    onClick = {
+                        expandedCreate = false
+                        Log.d("TitleScreen", "Navigating to NotesPage")
+//                        MainActivity().onNotebookSelected()
+                        navController.navigate("NotesPage") // Navigate to the NotesPage route},
+                    },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Rounded.Book,
@@ -158,7 +190,7 @@ fun TitleScreen(
                 navController.navigateUp()
             }) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back Button"
                 )
             }
@@ -172,69 +204,89 @@ fun TitleScreen(
                 )
             }
 
-            // Row for the right-side buttons
-            Row {
-                // Export/Share Button (Left of Settings)
-                IconButton(onClick = { /* Add Share Button functionality */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share Button"
-                    )
-                }
+            //Right-side buttons
+                    Row {
+                        IconButton(onClick = { /* Add Share functionality */ }) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Share Button"
+                            )
+                        }
 
-                // Settings Button with Dropdown (Top Right)
-                IconButton(onClick = { expandedSettings = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings Button"
-                    )
-                }
-                DropdownMenu(
-                    expanded = expandedSettings,
-                    onDismissRequest = { expandedSettings = false }
-                ) {
-                    // "Settings:" Header
-                    Text(
-                        text = "Settings:",
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Pens") },
-                        onClick = { /* Handle Pens Settings */ }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Notebook Preferences") },
-                        onClick = { /* Handle Notebook Preferences */ }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Defaults") },
-                        onClick = { /* Handle Defaults */ }
-                    )
-                }
-            }
+                        IconButton(onClick = { expandedSettings = true }) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings Button"
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = expandedSettings,
+                            onDismissRequest = { expandedSettings = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Pens") },
+                                onClick = {
+                                    expandedSettings = false
+                                    showPensPopup = true
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Notebook Preferences") },
+                                onClick = {
+                                    expandedSettings = false
+                                    showNotebookPreferencesPopup = true
+                                }
+                            )
+                        }
+                    }
         }
 
-        // Display subfolders or root folders
-        Row(modifier = Modifier.padding(top = 100.dp)) {
+        PensPopup(
+            showPopup = showPensPopup,
+            onDismiss = { showPensPopup = false },
+            onSizeChange = { /* Handle size change */ },
+            onColorChange = { /* Handle color change */ }
+        )
+
+        NotebookPreferencesPopup(
+            showPopup = showNotebookPreferencesPopup,
+            onDismiss = { showNotebookPreferencesPopup = false },
+            onBackgroundColorChange = { /* Handle color change */ },
+            onLinedChange = { /* Handle background type change */ },
+        )
+
+
+        // Inside the TitleScreen function, replace the Row for displaying folders:
+        FlowRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp,top = 96.dp),
+            mainAxisSpacing = 16.dp, // Spacing between items horizontally
+            crossAxisSpacing = 16.dp // Spacing between items vertically
+        ) {
             folders.forEach { folder ->
                 Button(
                     onClick = {
                         // When a folder is clicked, navigate to a new TitleScreen with the clicked folder as the parent
-                        navController.navigate("titleScreen/${folder.name}")
+                        navController.navigate("titleScreen/${folder.folderID}")
                     },
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(4.dp) // Adjust padding for individual buttons
                 ) {
-                    Text(text = folder.name)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Folder, // Use a folder icon
+                            contentDescription = "Folder Icon",
+                            modifier = Modifier.size(20.dp) // Adjust size as needed
+                        )
+                        Spacer(modifier = Modifier.width(8.dp)) // Add space between icon and text
+                        Text(text = folder.name)
+                    }
                 }
             }
         }
     }
 }
-
-
-
 
 
 @Preview(showBackground = true)
