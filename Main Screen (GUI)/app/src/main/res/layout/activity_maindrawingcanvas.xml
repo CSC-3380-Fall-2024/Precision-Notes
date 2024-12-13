@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+<!--    &lt;!&ndash; Custom Drawing Canvas &ndash;&gt;-->
+<!--    <com.thomasw.precision.DrawingCanvasView-->
+<!--        android:id="@+id/drawingCanvasView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="#FFFFFF" />-->
+
+    <!-- JLatexMathView for rendering LaTeX formula -->
+    <ru.noties.jlatexmath.JLatexMathView
+        android:id="@+id/j_latex_math_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="#00FFFFFF"
+        app:jlmv_alignVertical="center"
+        app:jlmv_alignHorizontal="center"
+        app:jlmv_textSize="16sp"
+        android:layout_centerInParent="true" />
+
+
+<!--    <fragment-->
+<!--        android:id="@+id/homeFragment"-->
+<!--        android:label="Home Screen"-->
+<!--        android:layout_height=""-->
+<!--        android:layout_width=""-->
+<!--        tools:ignore="MissingClass" />-->
+</LinearLayout>
